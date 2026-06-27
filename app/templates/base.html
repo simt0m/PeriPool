@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PeriPool{% endblock %}</title>
+</head>
+
+<body>
+    <header>
+        <h1>PeriPool</h1>
+        <p>Office peripheral borrowing system</p>
+
+        <nav>
+            <a href="{{ url_for('main.home') }}">Home</a>
+            <a href="{{ url_for('main.catalogue') }}">Catalogue</a>  
+        </nav>
+        
+        <hr>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <hr>
+        <p>&copy; 2026 PeriPool</p>
+    </footer>
+</body>
+</html>

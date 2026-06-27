@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}PeriPool | Catalogue{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Peripheral Catalogue</h2>
+
+    <p>
+        Browse available peripheral models and check current availability.
+    </p>
+
+    {% if item_models %}
+        {% for item_model in item_models %}
+            <article>
+                <h3>{{ item_model.manufacturer }} {{ item_model.model_name }}</h3>
+
+                <p>
+                    <strong>Category:</strong>
+                    {{ item_model.category.name }}
+                </p>
+
+                {% if item_model.description %}
+                    <p>
+                        <strong>Description:</strong>
+                        {{ item_model.description }}
+                    </p>
+                {% endif %}
+
+                <p>
+                    <strong>Availability:</strong>
+                    {{ item_model.available_units }} of {{ item_model.total_units }} available
+                </p>
+
+                <p>
+                    <strong>Average rating:</strong>
+                    {% if item_model.average_rating %}
+                        {{ item_model.average_rating }} / 5
+                    {% else %}
+                        No ratings yet
+                    {% endif %}
+                </p>
+
+                <hr>
+            </article>
+        {% endfor %}
+    {% else %}
+        <p>No catalogue items are currently available.</p>
+    {% endif %}
+</section>
+{% endblock %}
