@@ -1,8 +1,10 @@
+from datetime import timedelta
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
 from .extensions import db
-from .models import BorrowRecord, ItemModel, User
+from .models import BorrowRecord, ItemModel, ItemUnit, User, get_utc_now
 
 main = Blueprint('main', __name__)
 
@@ -22,6 +24,79 @@ def catalogue():
     )
 
     return render_template('catalogue.html', item_models=item_models)
+
+@main.route('/borrow/<int:item_model_id>', methods=['POST'])
+@login_required
+def borrow_item(item_model_id):
+    """Borrow one available unit for the selected item model."""
+    item_model = ItemModel.query.filter_by(
+        id=item_model_id,
+        is_active=True
+    ).first_or_404()
+
+    existing_borrow = (
+        BorrowRecord.query
+        .join(ItemUnit)
+        .filter(
+            BorrowRecord.user_id == current_user.id,
+            BorrowRecord.status == 'active',
+            ItemUnit.item_model_id == item_model.id
+        )
+        .first()
+    )
+
+    if existing_borrow:
+        flash('You already have this model on loan.', 'warning')
+        return redirect(url_for('main.catalogue'))
+
+    available_unit = (
+        ItemUnit.query
+        .filter_by(item_model_id=item_model.id, status='available')
+        .order_by(ItemUnit.asset_tag)
+        .first()
+    )
+
+    if available_unit is None:
+        flash('No units are currently available for this model.', 'warning')
+        return redirect(url_for('main.catalogue'))
+
+    available_unit.status = 'borrowed'
+
+    borrow_record = BorrowRecord(
+        user_id=current_user.id,
+        item_unit_id=available_unit.id,
+        due_at=get_utc_now() + timedelta(days=7),
+        status='active'
+    )
+
+    db.session.add(borrow_record)
+    db.session.commit()
+
+    flash(
+        f'You have borrowed {item_model.manufacturer} {item_model.model_name}.',
+        'success'
+    )
+
+    return redirect(url_for('main.dashboard'))
+
+@main.route('/return/<int:borrow_record_id>', methods=['POST'])
+@login_required
+def return_item(borrow_record_id):
+    """Return an active borrowed item."""
+    borrow_record = BorrowRecord.query.filter_by(
+        id=borrow_record_id,
+        user_id=current_user.id,
+        status='active'
+    ).first_or_404()
+
+    borrow_record.status = 'returned'
+    borrow_record.returned_at = get_utc_now()
+    borrow_record.item_unit.status = 'available'
+
+    db.session.commit()
+
+    flash('Item returned successfully.', 'success')
+    return redirect(url_for('main.dashboard'))
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():

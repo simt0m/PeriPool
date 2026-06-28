@@ -28,6 +28,10 @@
                     Asset tag: {{ record.item_unit.asset_tag }}
                     —
                     Due: {{ record.due_at.strftime("%d %b %Y") }}
+
+                    <form method="post" action="{{ url_for('main.return_item', borrow_record_id=record.id) }}">
+                        <button type="submit">Return item</button>
+                    </form>
                 </li>
             {% endfor %}
         </ul>
