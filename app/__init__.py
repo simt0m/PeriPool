@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 
-from .extensions import db
+from .extensions import db, login_manager
 
 
 def create_app():
@@ -28,6 +28,15 @@ def create_app():
 
     # --- Initialise extensions ---
     db.init_app(app)
+
+    login_manager.init_app(app)
+    login_manager.login_view = 'main.login'
+    login_manager.login_message = 'Please log in to access this page.'
+    login_manager.login_message_category = 'warning'
+
+
+    # Import models so Flask-Login can find the user loader
+    from . import models
 
     from .routes import main
     app.register_blueprint(main)

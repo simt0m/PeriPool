@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}PeriPool | Register{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Create an account</h2>
+
+    <form method="post">
+        <p>
+            <label for="name">Name</label><br>
+            <input type="text" id="name" name="name" required>
+        </p>
+
+        <p>
+            <label for="email">Email</label><br>
+            <input type="email" id="email" name="email" required>
+        </p>
+
+        <p>
+            <label for="password">Password</label><br>
+            <input type="password" id="password" name="password" required>
+        </p>
+
+        <p>
+            <label for="confirm_password">Confirm password</label><br>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+        </p>
+
+        <button type="submit">Register</button>
+    </form>
+</section>
+{% endblock %}

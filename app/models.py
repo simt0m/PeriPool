@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
 
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from .extensions import db
+from .extensions import db, login_manager
 
 
 def get_utc_now():
@@ -12,7 +13,7 @@ def get_utc_now():
     """
     return datetime.now(timezone.utc)
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     """User account for an employee or admin."""
 
     __tablename__ = 'users'
@@ -250,3 +251,8 @@ class ItemReview(db.Model):
     
     def __repr__(self):
         return f"<ItemReview user={self.user_id} item_model={self.item_model_id}>"
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Load a user by ID for Flask-Login."""
+    return db.session.get(User, int(user_id))

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}PeriPool | Dashboard{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Your dashboard</h2>
+
+    <p>
+        You are logged in as <strong>{{ current_user.name }}</strong>.
+    </p>
+
+    {% if current_user.is_admin %}
+        <p>
+            Your account has administrator access.
+        </p>
+    {% endif %}
+
+    <h3>Current borrowed items</h3>
+
+    {% if active_borrow_records %}
+        <ul>
+            {% for record in active_borrow_records %}
+                <li>
+                    {{ record.item_unit.item_model.manufacturer }}
+                    {{ record.item_unit.item_model.model_name }}
+                    —
+                    Asset tag: {{ record.item_unit.asset_tag }}
+                    —
+                    Due: {{ record.due_at.strftime("%d %b %Y") }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You do not currently have any borrowed items.</p>
+    {% endif %}
+
+    <h3>Previous borrowed items</h3>
+
+    {% if previous_borrow_records %}
+        <ul>
+            {% for record in previous_borrow_records %}
+                <li>
+                    {{ record.item_unit.item_model.manufacturer }}
+                    {{ record.item_unit.item_model.model_name }}
+                    —
+                    Status: {{ record.status }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You do not have any previous borrowed items.</p>
+    {% endif %}
+</section>
+{% endblock %}
