@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}PeriPool | Admin{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Admin dashboard</h2>
+
+    <p>
+        This page provides an overview of users, catalogue records, item units,
+        and borrowing activity.
+    </p>
+
+    <h3>Users</h3>
+    <ul>
+        <li>Total users: {{ total_users }}</li>
+        <li>Active users: {{ active_users }}</li>
+    </ul>
+
+    <h3>Catalogue</h3>
+    <ul>
+        <li>Total categories: {{ total_categories }}</li>
+        <li>Total item models: {{ total_item_models }}</li>
+        <li>Active item models: {{ active_item_models }}</li>
+    </ul>
+
+    <h3>Item units</h3>
+    <ul>
+        <li>Total item units: {{ total_item_units }}</li>
+        <li>Available item units: {{ available_item_units }}</li>
+        <li>Borrowed item units: {{ borrowed_item_units }}</li>
+        <li>Maintenance item units: {{ maintenance_item_units }}</li>
+    </ul>
+
+    <h3>Borrowing</h3>
+    <ul>
+        <li>Active borrow records: {{ active_borrow_records }}</li>
+        <li>Overdue borrow records: {{ overdue_borrow_records }}</li>
+    </ul>
+</section>
+{% endblock %}

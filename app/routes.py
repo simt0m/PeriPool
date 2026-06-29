@@ -3,8 +3,9 @@ from datetime import timedelta
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
+from .decorators import admin_required
 from .extensions import db
-from .models import BorrowRecord, ItemModel, ItemUnit, User, get_utc_now
+from .models import BorrowRecord, Category, ItemModel, ItemUnit, User, get_utc_now
 
 main = Blueprint('main', __name__)
 
@@ -203,3 +204,51 @@ def dashboard():
         active_borrow_records=active_borrow_records,
         previous_borrow_records=previous_borrow_records
     )
+
+@main.route('/admin')
+@admin_required
+def admin_dashboard():
+    """Render the administrator dashboard."""
+    total_users = User.query.count()
+    active_users = User.query.filter_by(is_active=True).count()
+
+    total_categories = Category.query.count()
+    total_item_models = ItemModel.query.count()
+    active_item_models = ItemModel.query.filter_by(is_active=True).count()
+
+    total_item_units = ItemUnit.query.count()
+    available_item_units = ItemUnit.query.filter_by(status='available').count()
+    borrowed_item_units = ItemUnit.query.filter_by(status='borrowed').count()
+    maintenance_item_units = ItemUnit.query.filter_by(status='maintenance').count()
+
+    active_borrow_records = BorrowRecord.query.filter_by(status='active').count()
+
+    overdue_borrow_records = (
+        BorrowRecord.query
+        .filter(
+            BorrowRecord.status == 'active',
+            BorrowRecord.returned_at.is_(None),
+            BorrowRecord.due_at < get_utc_now()
+        )
+        .count()
+    )
+
+    return render_template(
+        'admin_dashboard.html',
+        total_users=total_users,
+        active_users=active_users,
+        total_categories=total_categories,
+        total_item_models=total_item_models,
+        active_item_models=active_item_models,
+        total_item_units=total_item_units,
+        available_item_units=available_item_units,
+        borrowed_item_units=borrowed_item_units,
+        maintenance_item_units=maintenance_item_units,
+        active_borrow_records=active_borrow_records,
+        overdue_borrow_records=overdue_borrow_records,
+    )
+
+@main.app_errorhandler(403)
+def forbidden(error):
+    """Render a 403 Forbidden error page."""
+    return render_template('403.html'), 403
