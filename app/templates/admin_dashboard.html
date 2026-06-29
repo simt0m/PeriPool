@@ -11,6 +11,14 @@
         and borrowing activity.
     </p>
 
+    <h3>Admin tools</h3>
+
+    <ul>
+        <li><a href="{{ url_for('main.admin_users') }}">View users</a></li>
+        <li><a href="{{ url_for('main.admin_inventory') }}">View inventory</a></li>
+        <li><a href="{{ url_for('main.admin_borrow_records') }}">View borrow records</a></li>
+    </ul>
+
     <h3>Users</h3>
     <ul>
         <li>Total users: {{ total_users }}</li>

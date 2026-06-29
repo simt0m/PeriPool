@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}PeriPool | Admin Inventory{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Inventory</h2>
+
+    <p>
+        This page shows categories, catalogue models, and individual item units.
+    </p>
+
+    <h3>Categories</h3>
+
+    {% if categories %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description or 'No description' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No categories found.</p>
+    {% endif %}
+
+    <h3>Item models</h3>
+
+    {% if item_models %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Manufacturer</th>
+                    <th>Model</th>
+                    <th>Available units</th>
+                    <th>Total units</th>
+                    <th>Active</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item_model in item_models %}
+                    <tr>
+                        <td>{{ item_model.category.name }}</td>
+                        <td>{{ item_model.manufacturer }}</td>
+                        <td>{{ item_model.model_name }}</td>
+                        <td>{{ item_model.available_units }}</td>
+                        <td>{{ item_model.total_units }}</td>
+                        <td>{{ 'Yes' if item_model.is_active else 'No' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No item models found.</p>
+    {% endif %}
+
+    <h3>Item units</h3>
+
+    {% if item_units %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Asset tag</th>
+                    <th>Manufacturer</th>
+                    <th>Model</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item_unit in item_units %}
+                    <tr>
+                        <td>{{ item_unit.asset_tag }}</td>
+                        <td>{{ item_unit.item_model.manufacturer }}</td>
+                        <td>{{ item_unit.item_model.model_name }}</td>
+                        <td>{{ item_unit.item_model.category.name }}</td>
+                        <td>{{ item_unit.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No item units found.</p>
+    {% endif %}
+
+    <p>
+        <a href="{{ url_for('main.admin_dashboard') }}">Back to admin dashboard</a>
+    </p>
+</section>
+{% endblock %}

@@ -248,6 +248,58 @@ def admin_dashboard():
         overdue_borrow_records=overdue_borrow_records,
     )
 
+@main.route('/admin/users')
+@admin_required
+def admin_users():
+    """Render a read-only list of users."""
+    users = User.query.order_by(User.name).all()
+
+    return render_template(
+        'admin_users.html',
+        users=users
+    )
+
+@main.route('/admin/inventory')
+@admin_required
+def admin_inventory():
+    """Render a read-only view of catalogue and item units."""
+    categories = Category.query.order_by(Category.name).all()
+
+    item_models = (
+        ItemModel.query
+        .order_by(ItemModel.manufacturer, ItemModel.model_name)
+        .all()
+    )
+
+    item_units = (
+        ItemUnit.query
+        .join(ItemModel)
+        .order_by(ItemModel.manufacturer, ItemModel.model_name, ItemUnit.asset_tag)
+        .all()
+    )
+
+    return render_template(
+        'admin_inventory.html',
+        categories=categories,
+        item_models=item_models,
+        item_units=item_units
+    )
+
+@main.route('/admin/borrow-records')
+@admin_required
+def admin_borrow_records():
+    """Render a read-only list of borrow records."""
+    borrow_records = (
+        BorrowRecord.query
+        .order_by(BorrowRecord.borrowed_at.desc())
+        .all()
+    )
+
+    return render_template(
+        'admin_borrow_records.html',
+        borrow_records=borrow_records
+    )
+
 @main.app_errorhandler(403)
 def forbidden(error):
     """Render a 403 Forbidden error page."""
