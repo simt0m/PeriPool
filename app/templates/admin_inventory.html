@@ -10,6 +10,14 @@
         This page shows categories, catalogue models, and individual item units.
     </p>
 
+    <h3>Admin actions</h3>
+
+    <ul>
+        <li><a href="{{ url_for('main.admin_create_category') }}">Add category</a></li>
+        <li><a href="{{ url_for('main.admin_create_item_model') }}">Add item model</a></li>
+        <li><a href="{{ url_for('main.admin_create_item_unit') }}">Add item unit</a></li>
+    </ul>
+
     <h3>Categories</h3>
 
     {% if categories %}
@@ -18,6 +26,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -26,6 +35,9 @@
                     <tr>
                         <td>{{ category.name }}</td>
                         <td>{{ category.description or 'No description' }}</td>
+                        <td>
+                            <a href="{{ url_for('main.admin_edit_category', category_id=category.id) }}">Edit</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -46,6 +58,7 @@
                     <th>Available units</th>
                     <th>Total units</th>
                     <th>Active</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -58,6 +71,19 @@
                         <td>{{ item_model.available_units }}</td>
                         <td>{{ item_model.total_units }}</td>
                         <td>{{ 'Yes' if item_model.is_active else 'No' }}</td>
+                        <td>
+                            <a href="{{ url_for('main.admin_edit_item_model', item_model_id=item_model.id) }}">Edit</a>
+
+                            {% if item_model.is_active %}
+                                <form
+                                    method="post"
+                                    action="{{ url_for('main.admin_deactivate_item_model', item_model_id=item_model.id) }}"
+                                    onsubmit="return confirm('Deactivate this item model?');"
+                                >
+                                    <button type="submit">Deactivate</button>
+                                </form>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -77,6 +103,7 @@
                     <th>Model</th>
                     <th>Category</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -88,6 +115,23 @@
                         <td>{{ item_unit.item_model.model_name }}</td>
                         <td>{{ item_unit.item_model.category.name }}</td>
                         <td>{{ item_unit.status }}</td>
+                        <td>
+                            {% if item_unit.status != 'borrowed' %}
+                                <a href="{{ url_for('main.admin_edit_item_unit', item_unit_id=item_unit.id) }}">Edit</a>
+                            {% else %}
+                                Currently borrowed
+                            {% endif %}
+
+                            {% if not item_unit.borrow_records %}
+                                <form
+                                    method="post"
+                                    action="{{ url_for('main.admin_delete_item_unit', item_unit_id=item_unit.id) }}"
+                                    onsubmit="return confirm('Delete this item unit?');"
+                                >
+                                    <button type="submit">Delete</button>
+                                </form>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if category %}PeriPool | Edit Category{% else %}PeriPool | Add Category{% endif %}
+{% endblock %}
+
+{% block content %}
+<section>
+    {% if category %}
+        <h2>Edit category</h2>
+    {% else %}
+        <h2>Add category</h2>
+    {% endif %}
+
+    <form method="post">
+        <p>
+            <label for="name">Name</label><br>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                value="{{ category.name if category else '' }}"
+            >
+        </p>
+
+        <p>
+            <label for="description">Description</label><br>
+            <textarea id="description" name="description">{{ category.description if category and category.description else '' }}</textarea>
+        </p>
+
+        <button type="submit">
+            {% if category %}Update category{% else %}Create category{% endif %}
+        </button>
+    </form>
+
+    <p>
+        <a href="{{ url_for('main.admin_inventory') }}">Back to inventory</a>
+    </p>
+</section>
+{% endblock %}

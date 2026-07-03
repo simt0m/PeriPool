@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if item_model %}PeriPool | Edit Item Model{% else %}PeriPool | Add Item Model{% endif %}
+{% endblock %}
+
+{% block content %}
+<section>
+    {% if item_model %}
+        <h2>Edit item model</h2>
+    {% else %}
+        <h2>Add item model</h2>
+    {% endif %}
+
+    <form method="post">
+        <p>
+            <label for="category_id">Category</label><br>
+            <select id="category_id" name="category_id" required>
+                {% for category in categories %}
+                    <option
+                        value="{{ category.id }}"
+                        {% if item_model and item_model.category_id == category.id %}selected{% endif %}
+                    >
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            <label for="manufacturer">Manufacturer</label><br>
+            <input
+                type="text"
+                id="manufacturer"
+                name="manufacturer"
+                required
+                value="{{ item_model.manufacturer if item_model else '' }}"
+            >
+        </p>
+
+        <p>
+            <label for="model_name">Model name</label><br>
+            <input
+                type="text"
+                id="model_name"
+                name="model_name"
+                required
+                value="{{ item_model.model_name if item_model else '' }}"
+            >
+        </p>
+
+        <p>
+            <label for="description">Description</label><br>
+            <textarea id="description" name="description">{{ item_model.description if item_model and item_model.description else '' }}</textarea>
+        </p>
+
+        <p>
+            <label for="cost">Estimated cost</label><br>
+            <input
+                type="number"
+                id="cost"
+                name="cost"
+                step="0.01"
+                min="0"
+                value="{{ item_model.cost if item_model and item_model.cost is not none else '' }}"
+            >
+        </p>
+
+        <p>
+            <label for="image_url">Image URL</label><br>
+            <input
+                type="url"
+                id="image_url"
+                name="image_url"
+                value="{{ item_model.image_url if item_model and item_model.image_url else '' }}"
+            >
+        </p>
+
+        <p>
+            <label>
+                <input
+                    type="checkbox"
+                    name="is_active"
+                    {% if item_model is none or item_model.is_active %}checked{% endif %}
+                >
+                Active in catalogue
+            </label>
+        </p>
+
+        <button type="submit">
+            {% if item_model %}Update item model{% else %}Create item model{% endif %}
+        </button>
+    </form>
+
+    <p>
+        <a href="{{ url_for('main.admin_inventory') }}">Back to inventory</a>
+    </p>
+</section>
+{% endblock %}
