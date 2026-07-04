@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from flask_wtf.csrf import CSRFError
 
 from .decorators import admin_required
 from .extensions import db
@@ -749,3 +750,8 @@ def admin_borrow_records():
 def forbidden(error):
     """Render a 403 Forbidden error page."""
     return render_template('403.html'), 403
+
+@main.app_errorhandler(CSRFError)
+def handle_csrf_error(error):
+    """Render an error page when CSRF validation fails."""
+    return render_template('csrf_error.html', reason=error.description), 400

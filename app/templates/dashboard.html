@@ -30,6 +30,8 @@
                     Due: {{ record.due_at.strftime("%d %b %Y") }}
 
                     <form method="post" action="{{ url_for('main.return_item', borrow_record_id=record.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                         <button type="submit">Return item</button>
                     </form>
                 </li>

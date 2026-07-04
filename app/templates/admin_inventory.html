@@ -80,6 +80,8 @@
                                     action="{{ url_for('main.admin_deactivate_item_model', item_model_id=item_model.id) }}"
                                     onsubmit="return confirm('Deactivate this item model?');"
                                 >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                                     <button type="submit">Deactivate</button>
                                 </form>
                             {% endif %}
@@ -128,6 +130,8 @@
                                     action="{{ url_for('main.admin_delete_item_unit', item_unit_id=item_unit.id) }}"
                                     onsubmit="return confirm('Delete this item unit?');"
                                 >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                                     <button type="submit">Delete</button>
                                 </form>
                             {% endif %}

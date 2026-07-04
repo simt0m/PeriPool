@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 
-from .extensions import db, login_manager
+from .extensions import csrf, db, login_manager
 
 
 def create_app():
@@ -28,6 +28,7 @@ def create_app():
 
     # --- Initialise extensions ---
     db.init_app(app)
+    csrf.init_app(app)
 
     login_manager.init_app(app)
     login_manager.login_view = 'main.login'

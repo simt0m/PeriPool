@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}PeriPool | Security check failed{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Security check failed</h2>
+
+    <p>
+        The form could not be submitted because the security token was missing
+        or invalid.
+    </p>
+
+    {% if reason %}
+        <p>
+            <strong>Reason:</strong> {{ reason }}
+        </p>
+    {% endif %}
+
+    <p>
+        Please go back, refresh the page, and try again.
+    </p>
+</section>
+{% endblock %}
