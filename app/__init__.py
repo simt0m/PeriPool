@@ -4,7 +4,7 @@ from flask import Flask
 from .extensions import csrf, db, login_manager
 
 
-def create_app():
+def create_app(test_config=None):
     """Application factory for the Flask app.
 
     Builds and returns a configured Flask instance.
@@ -19,6 +19,8 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.instance_path, 'peripool.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    if test_config is not None:
+        app.config.update(test_config)
 
     # Create the instance folder if it doesn't exist
     try:
