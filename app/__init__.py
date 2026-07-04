@@ -2,6 +2,7 @@ import os
 from flask import Flask
 
 from .extensions import csrf, db, login_manager
+from config import get_config
 
 
 def create_app(test_config=None):
@@ -15,9 +16,12 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
     # --- Configuration ---
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY','dev_secret_key')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.instance_path, 'peripool.db')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object(get_config(os.environ.get('FLASK_CONFIG')))
+
+    app.config.setdefault(
+        'SQLALCHEMY_DATABASE_URI',
+        'sqlite:///' + os.path.join(app.instance_path, 'peripool.db')
+    )
 
     if test_config is not None:
         app.config.update(test_config)
