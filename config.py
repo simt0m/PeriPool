@@ -10,6 +10,7 @@ class Config:
     SESSION_COOKIE_SAMESITE = 'Lax'
 
     LOGIN_RATE_LIMIT = '5 per minute'
+    RATELIMIT_STORAGE_URI = 'memory://'
 
 
 class DevelopmentConfig(Config):

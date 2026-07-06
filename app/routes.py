@@ -1,12 +1,11 @@
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
-from flask_wtf.csrf import CSRFError
 
 from .decorators import admin_required
-from .extensions import db
+from .extensions import db, limiter
 from .models import BorrowRecord, Category, ItemModel, ItemUnit, User, get_utc_now
 
 main = Blueprint('main', __name__)
@@ -152,6 +151,7 @@ def register():
     return render_template('register.html')
 
 @main.route('/login', methods=['GET', 'POST'])
+@limiter.limit(lambda: current_app.config['LOGIN_RATE_LIMIT'], methods=['POST'])
 def login():
     """Log in an existing user."""
     if current_user.is_authenticated:
@@ -745,13 +745,3 @@ def admin_borrow_records():
         'admin_borrow_records.html',
         borrow_records=borrow_records
     )
-
-@main.app_errorhandler(403)
-def forbidden(error):
-    """Render a 403 Forbidden error page."""
-    return render_template('403.html'), 403
-
-@main.app_errorhandler(CSRFError)
-def handle_csrf_error(error):
-    """Render an error page when CSRF validation fails."""
-    return render_template('csrf_error.html', reason=error.description), 400

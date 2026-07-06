@@ -1,7 +1,8 @@
 import os
 from flask import Flask
 
-from .extensions import csrf, db, login_manager
+from .extensions import csrf, db, limiter, login_manager, talisman
+from .errors import register_error_handlers
 from config import get_config
 
 
@@ -41,6 +42,16 @@ def create_app(test_config=None):
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'warning'
 
+    limiter.init_app(app)
+
+    talisman.init_app(
+        app,
+        force_https=app.config['FORCE_HTTPS'],
+        session_cookie_secure=app.config['FORCE_HTTPS'],
+        content_security_policy={'default-src': "'self'"}
+    )
+
+    register_error_handlers(app)
 
     # Import models so Flask-Login can find the user loader
     from . import models
