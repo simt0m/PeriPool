@@ -3,6 +3,7 @@ from flask import Flask
 
 from .extensions import csrf, db, limiter, login_manager, talisman
 from .errors import register_error_handlers
+from .logging_config import configure_logging
 from config import get_config
 
 
@@ -32,6 +33,8 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path, exist_ok=True)
     except OSError:
         pass
+
+    configure_logging(app)
 
     # --- Initialise extensions ---
     db.init_app(app)

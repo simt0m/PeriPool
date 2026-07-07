@@ -76,6 +76,11 @@ def borrow_item(item_model_id):
     db.session.add(borrow_record)
     db.session.commit()
 
+    current_app.logger.info(
+        f'{current_user.email} borrowed unit {available_unit.asset_tag} '
+        f'({item_model.manufacturer} {item_model.model_name})'
+    )
+
     flash(
         f'You have borrowed {item_model.manufacturer} {item_model.model_name}.',
         'success'
@@ -98,6 +103,8 @@ def return_item(borrow_record_id):
     borrow_record.item_unit.status = 'available'
 
     db.session.commit()
+
+    current_app.logger.info(f'{current_user.email} returned unit {borrow_record.item_unit.asset_tag}')
 
     flash('Item returned successfully.', 'success')
     return redirect(url_for('main.dashboard'))
@@ -143,6 +150,8 @@ def register():
         db.session.add(user)
         db.session.commit()
 
+        current_app.logger.info(f'New user registered: {user.email}')
+
         login_user(user)
 
         flash('Account created successfully!', 'success')
@@ -164,10 +173,13 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user is None or not user.is_active or not user.check_password(password):
+            current_app.logger.warning(f'Failed login attempt for: {email}')
             flash('Invalid email or password.', 'danger')
             return render_template('login.html')
-        
+
         login_user(user)
+
+        current_app.logger.info(f'User logged in: {user.email}')
 
         flash('You have been logged in.', 'success')
         return redirect(url_for('main.dashboard'))
@@ -319,6 +331,8 @@ def admin_create_category():
         db.session.add(category)
         db.session.commit()
 
+        current_app.logger.info(f'{current_user.email} created category: {category.name}')
+
         flash('Category created successfully.', 'success')
         return redirect(url_for('main.admin_inventory'))
 
@@ -355,6 +369,8 @@ def admin_edit_category(category_id):
         category.description = description
 
         db.session.commit()
+
+        current_app.logger.info(f'{current_user.email} updated category: {category.name}')
 
         flash('Category updated successfully.', 'success')
         return redirect(url_for('main.admin_inventory'))
@@ -441,6 +457,10 @@ def admin_create_item_model():
         db.session.add(item_model)
         db.session.commit()
 
+        current_app.logger.info(
+            f'{current_user.email} created item model: {item_model.manufacturer} {item_model.model_name}'
+        )
+
         flash('Item model created successfully.', 'success')
         return redirect(url_for('main.admin_inventory'))
 
@@ -525,6 +545,10 @@ def admin_edit_item_model(item_model_id):
 
         db.session.commit()
 
+        current_app.logger.info(
+            f'{current_user.email} updated item model: {item_model.manufacturer} {item_model.model_name}'
+        )
+
         flash('Item model updated successfully.', 'success')
         return redirect(url_for('main.admin_inventory'))
 
@@ -543,6 +567,10 @@ def admin_deactivate_item_model(item_model_id):
     item_model.is_active = False
 
     db.session.commit()
+
+    current_app.logger.info(
+        f'{current_user.email} deactivated item model: {item_model.manufacturer} {item_model.model_name}'
+    )
 
     flash('Item model deactivated successfully.', 'success')
     return redirect(url_for('main.admin_inventory'))
@@ -619,6 +647,8 @@ def admin_create_item_unit():
 
         db.session.add(item_unit)
         db.session.commit()
+
+        current_app.logger.info(f'{current_user.email} created item unit: {item_unit.asset_tag}')
 
         flash('Item unit created successfully.', 'success')
         return redirect(url_for('main.admin_inventory'))
@@ -705,6 +735,8 @@ def admin_edit_item_unit(item_unit_id):
 
         db.session.commit()
 
+        current_app.logger.info(f'{current_user.email} updated item unit: {item_unit.asset_tag}')
+
         flash('Item unit updated successfully.', 'success')
         return redirect(url_for('main.admin_inventory'))
 
@@ -725,8 +757,12 @@ def admin_delete_item_unit(item_unit_id):
         flash('This item unit has borrowing history and cannot be deleted. Set it to inactive instead.', 'warning')
         return redirect(url_for('main.admin_inventory'))
 
+    asset_tag = item_unit.asset_tag
+
     db.session.delete(item_unit)
     db.session.commit()
+
+    current_app.logger.info(f'{current_user.email} deleted item unit: {asset_tag}')
 
     flash('Item unit deleted successfully.', 'success')
     return redirect(url_for('main.admin_inventory'))
