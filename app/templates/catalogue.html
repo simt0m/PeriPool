@@ -43,7 +43,7 @@
 
                 {% if current_user.is_authenticated %}
                     {% if item_model.available_units > 0 %}
-                        <form method="post" action="{{ url_for('main.borrow_item', item_model_id=item_model.id) }}">
+                        <form method="post" action="{{ url_for('catalogue.borrow_item', item_model_id=item_model.id) }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                             <button type="submit">Borrow this item</button>
@@ -53,7 +53,7 @@
                     {% endif %}
                 {% else %}
                     <p>
-                        <a href="{{ url_for('main.login') }}">Log in</a> to borrow this item.
+                        <a href="{{ url_for('auth.login') }}">Log in</a> to borrow this item.
                     </p>
                 {% endif %}
 

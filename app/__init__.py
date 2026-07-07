@@ -41,7 +41,7 @@ def create_app(test_config=None):
     csrf.init_app(app)
 
     login_manager.init_app(app)
-    login_manager.login_view = 'main.login'
+    login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'warning'
 
@@ -59,7 +59,12 @@ def create_app(test_config=None):
     # Import models so Flask-Login can find the user loader
     from . import models
 
-    from .routes import main
-    app.register_blueprint(main)
+    from .blueprints.auth import auth
+    from .blueprints.catalogue import catalogue
+    from .blueprints.admin import admin
+
+    app.register_blueprint(auth)
+    app.register_blueprint(catalogue)
+    app.register_blueprint(admin)
 
     return app
