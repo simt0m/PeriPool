@@ -137,7 +137,7 @@ def dashboard():
 @login_required
 def review_item(item_model_id):
     """Leave or update a review for a previously borrowed item model."""
-    item_model = ItemModel.query.get_or_404(item_model_id)
+    item_model = db.get_or_404(ItemModel, item_model_id)
 
     has_borrowed = (
         BorrowRecord.query

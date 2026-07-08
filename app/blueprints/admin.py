@@ -66,7 +66,7 @@ def users():
 @admin_required
 def toggle_user_active(user_id):
     """Suspend or reinstate a user account."""
-    user = User.query.get_or_404(user_id)
+    user = db.get_or_404(User, user_id)
 
     if user.id == current_user.id:
         flash('You cannot change your own active status.', 'warning')
@@ -113,7 +113,7 @@ def inventory():
 @admin_required
 def category_form(category_id=None):
     """Create a new category, or edit an existing one."""
-    category = Category.query.get_or_404(category_id) if category_id else None
+    category = db.get_or_404(Category, category_id) if category_id else None
     form = CategoryForm(obj=category, category_id=category_id)
 
     if form.validate_on_submit():
@@ -137,7 +137,7 @@ def category_form(category_id=None):
 @admin_required
 def item_model_form(item_model_id=None):
     """Create a new item model, or edit an existing one."""
-    item_model = ItemModel.query.get_or_404(item_model_id) if item_model_id else None
+    item_model = db.get_or_404(ItemModel, item_model_id) if item_model_id else None
     categories = Category.query.order_by(Category.name).all()
 
     if not categories:
@@ -169,7 +169,7 @@ def item_model_form(item_model_id=None):
 @admin_required
 def deactivate_item_model(item_model_id):
     """Deactivate an item model."""
-    item_model = ItemModel.query.get_or_404(item_model_id)
+    item_model = db.get_or_404(ItemModel, item_model_id)
 
     item_model.is_active = False
 
@@ -187,7 +187,7 @@ def deactivate_item_model(item_model_id):
 @admin_required
 def item_unit_form(item_unit_id=None):
     """Create a new item unit, or edit an existing one."""
-    item_unit = ItemUnit.query.get_or_404(item_unit_id) if item_unit_id else None
+    item_unit = db.get_or_404(ItemUnit, item_unit_id) if item_unit_id else None
 
     if item_unit and item_unit.status == 'borrowed':
         flash('Borrowed item units must be returned before they can be edited.', 'warning')
@@ -229,7 +229,7 @@ def item_unit_form(item_unit_id=None):
 @admin_required
 def delete_item_unit(item_unit_id):
     """Delete an item unit if it has no borrowing history."""
-    item_unit = ItemUnit.query.get_or_404(item_unit_id)
+    item_unit = db.get_or_404(ItemUnit, item_unit_id)
 
     if item_unit.borrow_records:
         flash('This item unit has borrowing history and cannot be deleted. Set it to inactive instead.', 'warning')

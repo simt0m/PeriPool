@@ -56,9 +56,6 @@ def create_app(test_config=None):
 
     register_error_handlers(app)
 
-    # Import models so Flask-Login can find the user loader
-    from . import models
-
     from .blueprints.auth import auth
     from .blueprints.catalogue import catalogue
     from .blueprints.admin import admin
