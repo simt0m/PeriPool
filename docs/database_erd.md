@@ -1,20 +1,21 @@
 # PeriPool Database Schema
 
-# Press ctrl + shift + v to view it
+This entity-relationship diagram matches the current SQLAlchemy models and the
+schema described in `docs/database_design.md`.
 
 ```mermaid
 erDiagram
-    USER ||--o{ BORROWING : makes
-    USER ||--o{ ITEM_REVIEW : writes
+    USERS ||--o{ BORROW_RECORDS : makes
+    USERS ||--o{ ITEM_REVIEWS : writes
 
-    CATEGORY ||--o{ ITEM_MODEL : contains
+    CATEGORIES ||--o{ ITEM_MODELS : contains
 
-    ITEM_MODEL ||--o{ ITEM_UNIT : has
-    ITEM_MODEL ||--o{ ITEM_REVIEW : receives
+    ITEM_MODELS ||--o{ ITEM_UNITS : has
+    ITEM_MODELS ||--o{ ITEM_REVIEWS : receives
 
-    ITEM_UNIT ||--o{ BORROWING : appears_in
+    ITEM_UNITS ||--o{ BORROW_RECORDS : appears_in
 
-    USER {
+    USERS {
         int id PK
         string name
         string email UK
@@ -25,43 +26,37 @@ erDiagram
         datetime updated_at
     }
 
-    CATEGORY {
+    CATEGORIES {
         int id PK
         string name UK
         text description
         datetime created_at
+        datetime updated_at
     }
 
-    ITEM_MODEL {
+    ITEM_MODELS {
         int id PK
         int category_id FK
         string manufacturer
         string model_name
         text description
-        decimal purchase_price
+        decimal cost
         string image_url
-        float admin_rating
         boolean is_active
         datetime created_at
         datetime updated_at
     }
 
-    ITEM_UNIT {
+    ITEM_UNITS {
         int id PK
         int item_model_id FK
         string asset_tag UK
-        string serial_number UK
         string status
-        string condition
-        string location
-        text notes
-        datetime acquired_at
-        datetime retired_at
         datetime created_at
         datetime updated_at
     }
 
-    BORROWING {
+    BORROW_RECORDS {
         int id PK
         int user_id FK
         int item_unit_id FK
@@ -69,19 +64,17 @@ erDiagram
         datetime due_at
         datetime returned_at
         string status
-        string checkout_condition
-        string return_condition
-        text notes
         datetime created_at
         datetime updated_at
     }
 
-    ITEM_REVIEW {
+    ITEM_REVIEWS {
         int id PK
         int user_id FK
         int item_model_id FK
         int rating
         text comment
         datetime created_at
+        datetime updated_at
     }
 ```
