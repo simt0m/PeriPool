@@ -11,7 +11,7 @@
     </p>
 
     {% if borrow_records %}
-        <table border="1">
+        <table>
             <thead>
                 <tr>
                     <th>User</th>
@@ -28,29 +28,29 @@
             <tbody>
                 {% for record in borrow_records %}
                     <tr>
-                        <td>{{ record.user.name }}</td>
-                        <td>{{ record.user.email }}</td>
-                        <td>
+                        <td data-label="User">{{ record.user.name }}</td>
+                        <td data-label="Email">{{ record.user.email }}</td>
+                        <td data-label="Item">
                             {{ record.item_unit.item_model.manufacturer }}
                             {{ record.item_unit.item_model.model_name }}
                         </td>
-                        <td>{{ record.item_unit.asset_tag }}</td>
-                        <td>{{ record.status }}</td>
-                        <td>
+                        <td data-label="Asset tag">{{ record.item_unit.asset_tag }}</td>
+                        <td data-label="Status">{{ record.status }}</td>
+                        <td data-label="Borrowed">
                             {% if record.borrowed_at %}
                                 {{ record.borrowed_at.strftime('%d %b %Y') }}
                             {% else %}
                                 Not recorded
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-label="Due">
                             {% if record.due_at %}
                                 {{ record.due_at.strftime('%d %b %Y') }}
                             {% else %}
                                 Not recorded
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-label="Returned">
                             {% if record.returned_at %}
                                 {{ record.returned_at.strftime('%d %b %Y') }}
                             {% else %}

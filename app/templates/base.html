@@ -4,49 +4,43 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PeriPool{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-    <header>
-        <h1>PeriPool</h1>
-        <p>Office peripheral borrowing system</p>
+    <header class="site-header">
+        <div class="brand">
+            <h1>PeriPool</h1>
+            <p>Office peripheral borrowing system</p>
+        </div>
 
         <nav>
             <a href="{{ url_for('catalogue.home') }}">Home</a>
-            |
             <a href="{{ url_for('catalogue.catalogue_view') }}">Catalogue</a>
 
             {% if current_user.is_authenticated %}
-                |
                 <a href="{{ url_for('catalogue.dashboard') }}">Dashboard</a>
 
                 {% if current_user.is_admin %}
-                    |
                     <a href="{{ url_for('admin.dashboard') }}">Admin</a>
                 {% endif %}
 
-                |
                 <a href="{{ url_for('auth.logout') }}">Logout</a>
             {% else %}
-                |
                 <a href="{{ url_for('auth.login') }}">Login</a>
-                |
                 <a href="{{ url_for('auth.register') }}">Register</a>
             {% endif %}
         </nav>
-        
-        <hr>
     </header>
 
     <main>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <section>
+                <div class="flash-list">
                     {% for category, message in messages %}
-                    <p><strong>{{ category|title }}:</strong> {{ message }}</p>
+                        <p class="flash flash-{{ category }}">{{ message }}</p>
                     {% endfor %}
-                </section>
-                <hr>
+                </div>
             {% endif %}
         {% endwith %}
 
@@ -54,7 +48,6 @@
     </main>
 
     <footer>
-        <hr>
         <p>&copy; 2026 PeriPool</p>
     </footer>
 

@@ -21,7 +21,7 @@
     <h3>Categories</h3>
 
     {% if categories %}
-        <table border="1">
+        <table>
             <thead>
                 <tr>
                     <th>Name</th>
@@ -33,9 +33,9 @@
             <tbody>
                 {% for category in categories %}
                     <tr>
-                        <td>{{ category.name }}</td>
-                        <td>{{ category.description or 'No description' }}</td>
-                        <td>
+                        <td data-label="Name">{{ category.name }}</td>
+                        <td data-label="Description">{{ category.description or 'No description' }}</td>
+                        <td data-label="Actions">
                             <a href="{{ url_for('admin.category_form', category_id=category.id) }}">Edit</a>
                         </td>
                     </tr>
@@ -49,7 +49,7 @@
     <h3>Item models</h3>
 
     {% if item_models %}
-        <table border="1">
+        <table>
             <thead>
                 <tr>
                     <th>Category</th>
@@ -65,13 +65,13 @@
             <tbody>
                 {% for item_model in item_models %}
                     <tr>
-                        <td>{{ item_model.category.name }}</td>
-                        <td>{{ item_model.manufacturer }}</td>
-                        <td>{{ item_model.model_name }}</td>
-                        <td>{{ item_model.available_units }}</td>
-                        <td>{{ item_model.total_units }}</td>
-                        <td>{{ 'Yes' if item_model.is_active else 'No' }}</td>
-                        <td>
+                        <td data-label="Category">{{ item_model.category.name }}</td>
+                        <td data-label="Manufacturer">{{ item_model.manufacturer }}</td>
+                        <td data-label="Model">{{ item_model.model_name }}</td>
+                        <td data-label="Available units">{{ item_model.available_units }}</td>
+                        <td data-label="Total units">{{ item_model.total_units }}</td>
+                        <td data-label="Active">{{ 'Yes' if item_model.is_active else 'No' }}</td>
+                        <td data-label="Actions">
                             <a href="{{ url_for('admin.item_model_form', item_model_id=item_model.id) }}">Edit</a>
 
                             {% if item_model.is_active %}
@@ -97,7 +97,7 @@
     <h3>Item units</h3>
 
     {% if item_units %}
-        <table border="1">
+        <table>
             <thead>
                 <tr>
                     <th>Asset tag</th>
@@ -112,12 +112,12 @@
             <tbody>
                 {% for item_unit in item_units %}
                     <tr>
-                        <td>{{ item_unit.asset_tag }}</td>
-                        <td>{{ item_unit.item_model.manufacturer }}</td>
-                        <td>{{ item_unit.item_model.model_name }}</td>
-                        <td>{{ item_unit.item_model.category.name }}</td>
-                        <td>{{ item_unit.status }}</td>
-                        <td>
+                        <td data-label="Asset tag">{{ item_unit.asset_tag }}</td>
+                        <td data-label="Manufacturer">{{ item_unit.item_model.manufacturer }}</td>
+                        <td data-label="Model">{{ item_unit.item_model.model_name }}</td>
+                        <td data-label="Category">{{ item_unit.item_model.category.name }}</td>
+                        <td data-label="Status">{{ item_unit.status }}</td>
+                        <td data-label="Actions">
                             {% if item_unit.status != 'borrowed' %}
                                 <a href="{{ url_for('admin.item_unit_form', item_unit_id=item_unit.id) }}">Edit</a>
                             {% else %}
