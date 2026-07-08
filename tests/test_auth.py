@@ -8,7 +8,7 @@ def test_user_can_register(app, client):
         '/register',
         data={
             'name': 'New User',
-            'email': 'new.user@test.local',
+            'email': 'new.user@example.com',
             'password': 'Password123!',
             'confirm_password': 'Password123!',
         },
@@ -19,7 +19,7 @@ def test_user_can_register(app, client):
     assert b'Account created successfully' in response.data
 
     with app.app_context():
-        user = User.query.filter_by(email='new.user@test.local').first()
+        user = User.query.filter_by(email='new.user@example.com').first()
         assert user is not None
         assert user.password_hash != 'Password123!'
 

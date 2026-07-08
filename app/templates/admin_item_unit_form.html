@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import render_field %}
 
 {% block title %}
     {% if item_unit %}PeriPool | Edit Item Unit{% else %}PeriPool | Add Item Unit{% endif %}
@@ -13,48 +14,11 @@
     {% endif %}
 
     <form method="post">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {{ form.hidden_tag() }}
 
-        <p>
-            <label for="item_model_id">Item model</label><br>
-            <select id="item_model_id" name="item_model_id" required>
-                {% for item_model in item_models %}
-                    <option
-                        value="{{ item_model.id }}"
-                        {% if item_unit and item_unit.item_model_id == item_model.id %}selected{% endif %}
-                    >
-                        {{ item_model.manufacturer }} {{ item_model.model_name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </p>
-
-        <p>
-            <label for="asset_tag">Asset tag</label><br>
-            <input
-                type="text"
-                id="asset_tag"
-                name="asset_tag"
-                required
-                value="{{ item_unit.asset_tag if item_unit else '' }}"
-            >
-        </p>
-
-        <p>
-            <label for="status">Status</label><br>
-            <select id="status" name="status" required>
-                {% set selected_status = item_unit.status if item_unit else 'available' %}
-
-                {% for status in statuses %}
-                    <option
-                        value="{{ status }}"
-                        {% if status == selected_status %}selected{% endif %}
-                    >
-                        {{ status|title }}
-                    </option>
-                {% endfor %}
-            </select>
-        </p>
+        {{ render_field(form.item_model_id) }}
+        {{ render_field(form.asset_tag) }}
+        {{ render_field(form.status) }}
 
         <button type="submit">
             {% if item_unit %}Update item unit{% else %}Create item unit{% endif %}

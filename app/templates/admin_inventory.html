@@ -13,9 +13,9 @@
     <h3>Admin actions</h3>
 
     <ul>
-        <li><a href="{{ url_for('admin.create_category') }}">Add category</a></li>
-        <li><a href="{{ url_for('admin.create_item_model') }}">Add item model</a></li>
-        <li><a href="{{ url_for('admin.create_item_unit') }}">Add item unit</a></li>
+        <li><a href="{{ url_for('admin.category_form') }}">Add category</a></li>
+        <li><a href="{{ url_for('admin.item_model_form') }}">Add item model</a></li>
+        <li><a href="{{ url_for('admin.item_unit_form') }}">Add item unit</a></li>
     </ul>
 
     <h3>Categories</h3>
@@ -36,7 +36,7 @@
                         <td>{{ category.name }}</td>
                         <td>{{ category.description or 'No description' }}</td>
                         <td>
-                            <a href="{{ url_for('admin.edit_category', category_id=category.id) }}">Edit</a>
+                            <a href="{{ url_for('admin.category_form', category_id=category.id) }}">Edit</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -72,7 +72,7 @@
                         <td>{{ item_model.total_units }}</td>
                         <td>{{ 'Yes' if item_model.is_active else 'No' }}</td>
                         <td>
-                            <a href="{{ url_for('admin.edit_item_model', item_model_id=item_model.id) }}">Edit</a>
+                            <a href="{{ url_for('admin.item_model_form', item_model_id=item_model.id) }}">Edit</a>
 
                             {% if item_model.is_active %}
                                 <form
@@ -119,7 +119,7 @@
                         <td>{{ item_unit.status }}</td>
                         <td>
                             {% if item_unit.status != 'borrowed' %}
-                                <a href="{{ url_for('admin.edit_item_unit', item_unit_id=item_unit.id) }}">Edit</a>
+                                <a href="{{ url_for('admin.item_unit_form', item_unit_id=item_unit.id) }}">Edit</a>
                             {% else %}
                                 Currently borrowed
                             {% endif %}

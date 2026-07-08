@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import render_field %}
 
 {% block title %}PeriPool | Register{% endblock %}
 
@@ -7,27 +8,12 @@
     <h2>Create an account</h2>
 
     <form method="post">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {{ form.hidden_tag() }}
 
-        <p>
-            <label for="name">Name</label><br>
-            <input type="text" id="name" name="name" required>
-        </p>
-
-        <p>
-            <label for="email">Email</label><br>
-            <input type="email" id="email" name="email" required>
-        </p>
-
-        <p>
-            <label for="password">Password</label><br>
-            <input type="password" id="password" name="password" required>
-        </p>
-
-        <p>
-            <label for="confirm_password">Confirm password</label><br>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-        </p>
+        {{ render_field(form.name) }}
+        {{ render_field(form.email) }}
+        {{ render_field(form.password) }}
+        {{ render_field(form.confirm_password) }}
 
         <button type="submit">Register</button>
     </form>

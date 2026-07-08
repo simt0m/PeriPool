@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import render_field %}
 
 {% block title %}
     {% if item_model %}PeriPool | Edit Item Model{% else %}PeriPool | Add Item Model{% endif %}
@@ -13,78 +14,18 @@
     {% endif %}
 
     <form method="post">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {{ form.hidden_tag() }}
 
-        <p>
-            <label for="category_id">Category</label><br>
-            <select id="category_id" name="category_id" required>
-                {% for category in categories %}
-                    <option
-                        value="{{ category.id }}"
-                        {% if item_model and item_model.category_id == category.id %}selected{% endif %}
-                    >
-                        {{ category.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </p>
-
-        <p>
-            <label for="manufacturer">Manufacturer</label><br>
-            <input
-                type="text"
-                id="manufacturer"
-                name="manufacturer"
-                required
-                value="{{ item_model.manufacturer if item_model else '' }}"
-            >
-        </p>
-
-        <p>
-            <label for="model_name">Model name</label><br>
-            <input
-                type="text"
-                id="model_name"
-                name="model_name"
-                required
-                value="{{ item_model.model_name if item_model else '' }}"
-            >
-        </p>
-
-        <p>
-            <label for="description">Description</label><br>
-            <textarea id="description" name="description">{{ item_model.description if item_model and item_model.description else '' }}</textarea>
-        </p>
-
-        <p>
-            <label for="cost">Estimated cost</label><br>
-            <input
-                type="number"
-                id="cost"
-                name="cost"
-                step="0.01"
-                min="0"
-                value="{{ item_model.cost if item_model and item_model.cost is not none else '' }}"
-            >
-        </p>
-
-        <p>
-            <label for="image_url">Image URL</label><br>
-            <input
-                type="url"
-                id="image_url"
-                name="image_url"
-                value="{{ item_model.image_url if item_model and item_model.image_url else '' }}"
-            >
-        </p>
+        {{ render_field(form.category_id) }}
+        {{ render_field(form.manufacturer) }}
+        {{ render_field(form.model_name) }}
+        {{ render_field(form.description) }}
+        {{ render_field(form.cost) }}
+        {{ render_field(form.image_url) }}
 
         <p>
             <label>
-                <input
-                    type="checkbox"
-                    name="is_active"
-                    {% if item_model is none or item_model.is_active %}checked{% endif %}
-                >
+                {{ form.is_active() }}
                 Active in catalogue
             </label>
         </p>

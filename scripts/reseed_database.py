@@ -22,14 +22,14 @@ with app.app_context():
 
     admin = User(
         name="Admin User",
-        email="admin@peripool.local",
+        email="admin@peripool.com",
         is_admin=True,
     )
     admin.set_password("AdminPass123!")
 
     employee = User(
         name="Alex Carter",
-        email="alex.carter@peripool.local",
+        email="alex.carter@peripool.com",
         is_admin=False,
     )
     employee.set_password("EmployeePass123!")
@@ -152,5 +152,5 @@ with app.app_context():
     db.session.commit()
 
     print("Database reseeded successfully.")
-    print("Admin login: admin@peripool.local / AdminPass123!")
-    print("Employee login: alex.carter@peripool.local / EmployeePass123!")
+    print("Admin login: admin@peripool.com / AdminPass123!")
+    print("Employee login: alex.carter@peripool.com / EmployeePass123!")

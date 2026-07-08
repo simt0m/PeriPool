@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import render_field %}
 
 {% block title %}
     {% if category %}PeriPool | Edit Category{% else %}PeriPool | Add Category{% endif %}
@@ -13,23 +14,10 @@
     {% endif %}
 
     <form method="post">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {{ form.hidden_tag() }}
 
-        <p>
-            <label for="name">Name</label><br>
-            <input
-                type="text"
-                id="name"
-                name="name"
-                required
-                value="{{ category.name if category else '' }}"
-            >
-        </p>
-
-        <p>
-            <label for="description">Description</label><br>
-            <textarea id="description" name="description">{{ category.description if category and category.description else '' }}</textarea>
-        </p>
+        {{ render_field(form.name) }}
+        {{ render_field(form.description) }}
 
         <button type="submit">
             {% if category %}Update category{% else %}Create category{% endif %}

@@ -50,7 +50,7 @@ def seeded_data(app):
     with app.app_context():
         admin = User(
             name='Admin User',
-            email='admin@test.local',
+            email='admin@example.com',
             is_admin=True,
             is_active=True
         )
@@ -58,7 +58,7 @@ def seeded_data(app):
 
         employee = User(
             name='Employee User',
-            email='employee@test.local',
+            email='employee@example.com',
             is_admin=False,
             is_active=True
         )
