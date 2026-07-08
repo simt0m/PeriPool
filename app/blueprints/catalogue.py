@@ -4,7 +4,8 @@ from flask import Blueprint, current_app, flash, redirect, render_template, url_
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..models import BorrowRecord, ItemModel, ItemUnit, get_utc_now
+from ..forms import ReviewForm
+from ..models import BorrowRecord, ItemModel, ItemReview, ItemUnit, get_utc_now
 
 catalogue = Blueprint('catalogue', __name__)
 
@@ -131,3 +132,44 @@ def dashboard():
         active_borrow_records=active_borrow_records,
         previous_borrow_records=previous_borrow_records
     )
+
+@catalogue.route('/catalogue/<int:item_model_id>/review', methods=['GET', 'POST'])
+@login_required
+def review_item(item_model_id):
+    """Leave or update a review for a previously borrowed item model."""
+    item_model = ItemModel.query.get_or_404(item_model_id)
+
+    has_borrowed = (
+        BorrowRecord.query
+        .join(ItemUnit)
+        .filter(
+            BorrowRecord.user_id == current_user.id,
+            ItemUnit.item_model_id == item_model.id
+        )
+        .first()
+    )
+
+    if not has_borrowed:
+        flash('You can only review items you have borrowed.', 'warning')
+        return redirect(url_for('catalogue.dashboard'))
+
+    review = ItemReview.query.filter_by(user_id=current_user.id, item_model_id=item_model.id).first()
+    form = ReviewForm(obj=review)
+
+    if form.validate_on_submit():
+        if review is None:
+            review = ItemReview(user_id=current_user.id, item_model_id=item_model.id)
+            db.session.add(review)
+
+        form.populate_obj(review)
+        db.session.commit()
+
+        current_app.logger.info(
+            f'{current_user.email} reviewed item model: '
+            f'{item_model.manufacturer} {item_model.model_name} ({review.rating}/5)'
+        )
+
+        flash('Thank you for your review!', 'success')
+        return redirect(url_for('catalogue.dashboard'))
+
+    return render_template('review_form.html', form=form, item_model=item_model)

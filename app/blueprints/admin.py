@@ -62,6 +62,26 @@ def users():
         users=all_users
     )
 
+@admin.route('/users/<int:user_id>/toggle-active', methods=['POST'])
+@admin_required
+def toggle_user_active(user_id):
+    """Suspend or reinstate a user account."""
+    user = User.query.get_or_404(user_id)
+
+    if user.id == current_user.id:
+        flash('You cannot change your own active status.', 'warning')
+        return redirect(url_for('admin.users'))
+
+    user.is_active = not user.is_active
+
+    db.session.commit()
+
+    action = 'reactivated' if user.is_active else 'suspended'
+    current_app.logger.info(f'{current_user.email} {action} user: {user.email}')
+
+    flash(f'User account {action} successfully.', 'success')
+    return redirect(url_for('admin.users'))
+
 @admin.route('/inventory')
 @admin_required
 def inventory():

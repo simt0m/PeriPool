@@ -51,6 +51,8 @@
                     {{ record.item_unit.item_model.model_name }}
                     —
                     Status: {{ record.status }}
+                    —
+                    <a href="{{ url_for('catalogue.review_item', item_model_id=record.item_unit.item_model_id) }}">Leave a review</a>
                 </li>
             {% endfor %}
         </ul>

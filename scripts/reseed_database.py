@@ -111,7 +111,7 @@ with app.app_context():
         ItemUnit(item_model=jabra_55, asset_tag="PP-HS-004", status="available"),
         ItemUnit(item_model=jabra_55, asset_tag="PP-HS-005", status="maintenance"),
         ItemUnit(item_model=logitech_brio, asset_tag="PP-WC-001", status="available"),
-        ItemUnit(item_model=mx_master, asset_tag="PP-MS-001", status="available"),
+        ItemUnit(item_model=mx_master, asset_tag="PP-MS-001", status="borrowed"),
         ItemUnit(item_model=mx_master, asset_tag="PP-MS-002", status="available"),
         ItemUnit(item_model=dell_dock, asset_tag="PP-DS-001", status="available"),
     ]
@@ -124,12 +124,43 @@ with app.app_context():
         status="active",
     )
 
-    review = ItemReview(
+    overdue_borrow = BorrowRecord(
         user=employee,
-        item_model=jabra_65,
-        rating=5,
-        comment="Comfortable headset with strong microphone quality.",
+        item_unit=item_units[6],
+        borrowed_at=get_utc_now() - timedelta(days=10),
+        due_at=get_utc_now() - timedelta(days=3),
+        status="active",
     )
+
+    returned_borrow = BorrowRecord(
+        user=employee,
+        item_unit=item_units[5],
+        borrowed_at=get_utc_now() - timedelta(days=14),
+        due_at=get_utc_now() - timedelta(days=7),
+        returned_at=get_utc_now() - timedelta(days=8),
+        status="returned",
+    )
+
+    reviews = [
+        ItemReview(
+            user=employee,
+            item_model=jabra_65,
+            rating=5,
+            comment="Comfortable headset with strong microphone quality.",
+        ),
+        ItemReview(
+            user=employee,
+            item_model=logitech_brio,
+            rating=4,
+            comment="Sharp picture in video calls, but a bit bulky to carry between desks.",
+        ),
+        ItemReview(
+            user=employee,
+            item_model=mx_master,
+            rating=4,
+            comment="Very comfortable for long sessions, though the battery drains faster than expected.",
+        ),
+    ]
 
     db.session.add_all([
         admin,
@@ -146,7 +177,9 @@ with app.app_context():
         dell_dock,
         *item_units,
         active_borrow,
-        review,
+        overdue_borrow,
+        returned_borrow,
+        *reviews,
     ])
 
     db.session.commit()

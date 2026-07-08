@@ -5,6 +5,8 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange
 from .extensions import db
 from .models import Category, ItemModel, ItemUnit, User
 
+REVIEW_RATING_CHOICES = [(rating, str(rating)) for rating in range(1, 6)]
+
 ITEM_UNIT_ADMIN_STATUSES = ['available', 'maintenance', 'inactive']
 
 
@@ -156,3 +158,16 @@ class ItemUnitForm(FlaskForm):
 
         if query.first():
             raise ValidationError('An item unit with that asset tag already exists.')
+
+
+class ReviewForm(FlaskForm):
+    """Validates a rating and comment left for a previously borrowed item model."""
+
+    rating = SelectField(
+        'Rating',
+        choices=REVIEW_RATING_CHOICES,
+        coerce=int,
+        validators=[DataRequired()],
+        render_kw={'required': True}
+    )
+    comment = TextAreaField('Comment', filters=[_strip], validators=[Optional(), Length(max=2000)])

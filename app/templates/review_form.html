@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "macros.html" import render_field %}
+
+{% block title %}PeriPool | Review {{ item_model.manufacturer }} {{ item_model.model_name }}{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Review {{ item_model.manufacturer }} {{ item_model.model_name }}</h2>
+
+    <form method="post">
+        {{ form.hidden_tag() }}
+
+        {{ render_field(form.rating) }}
+        {{ render_field(form.comment) }}
+
+        <button type="submit">Submit review</button>
+    </form>
+
+    <p>
+        <a href="{{ url_for('catalogue.dashboard') }}">Back to dashboard</a>
+    </p>
+</section>
+{% endblock %}

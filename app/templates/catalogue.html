@@ -36,6 +36,7 @@
                     <strong>Average rating:</strong>
                     {% if item_model.average_rating %}
                         {{ item_model.average_rating }} / 5
+                        ({{ item_model.reviews|length }} review{{ 's' if item_model.reviews|length != 1 else '' }})
                     {% else %}
                         No ratings yet
                     {% endif %}
