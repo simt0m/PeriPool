@@ -14,6 +14,8 @@ Full database design documentation is available in:
 
 [Database Design](docs/database_design.md)
 
+A pre-populated sample database is included at `docs/peripool_sample.db` — open it directly with any SQLite browser to inspect the schema and data without running anything, or copy it to `instance/peripool.db` to skip the seed step below.
+
 ## Running It Locally
 
 ```bash

@@ -8,3 +8,6 @@ instance/
 .coverage
 .vscode/
 logs/
+
+# Sample database committed for the marker is an intentional exception to *.db above
+!docs/peripool_sample.db
