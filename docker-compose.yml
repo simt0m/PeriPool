@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - FLASK_CONFIG=development
+    volumes:
+      - instance_data:/app/instance
+      - log_data:/app/logs
+
+volumes:
+  instance_data:
+  log_data:

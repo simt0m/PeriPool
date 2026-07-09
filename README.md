@@ -1,5 +1,7 @@
 # PeriPool
 
+![CI](https://github.com/simt0m/PeriPool/actions/workflows/ci.yml/badge.svg)
+
 PeriPool is a company peripheral borrowing app that lets employees borrow shared office equipment such as mice, keyboards, headsets, webcams, and adapters.
 
 The app helps employees who forgot essential equipment for an office day, and also lets users trial peripherals before requesting a permanent purchase through their cost center.
@@ -47,4 +49,16 @@ The site is served at http://127.0.0.1:5000.
 ```bash
 pytest --cov=app --cov-report=term-missing
 ruff check .
+```
+
+## Running It With Docker
+
+```bash
+docker compose up --build
+```
+
+This builds the image and serves the app at http://localhost:5000, same as running it locally. It needs a `.env` file (see above) — `SECRET_KEY` gets picked up from there. Database and log data persist in Docker volumes across restarts, so run the seed command inside the container the first time:
+
+```bash
+docker compose exec web python -m scripts.reseed_database
 ```
