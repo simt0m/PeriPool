@@ -1,3 +1,5 @@
+import re
+
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, DecimalField, EmailField, PasswordField, SelectField, StringField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional, ValidationError
@@ -8,6 +10,11 @@ from .models import Category, ItemModel, ItemUnit, User
 REVIEW_RATING_CHOICES = [(rating, str(rating)) for rating in range(1, 6)]
 
 ITEM_UNIT_ADMIN_STATUSES = ['available', 'maintenance', 'inactive']
+
+# Blocks digits and obviously-wrong symbols, rather than only allowing a fixed
+# set of characters — an allow-list here would reject legitimate accented
+# names (e.g. "José", "François").
+_NAME_INVALID_CHARACTERS = re.compile(r"[0-9@#$%^&*_+=\[\]{}|\\/<>~`\"]")
 
 
 def _strip(value):
@@ -28,7 +35,7 @@ class RegisterForm(FlaskForm):
     name = StringField(
         'Name',
         filters=[_strip],
-        validators=[DataRequired(), Length(max=100)],
+        validators=[DataRequired(), Length(min=2, max=100)],
         render_kw={'required': True}
     )
     email = EmailField(
@@ -47,6 +54,10 @@ class RegisterForm(FlaskForm):
         validators=[DataRequired(), EqualTo('password', message='Passwords do not match.')],
         render_kw={'required': True}
     )
+
+    def validate_name(self, field):
+        if _NAME_INVALID_CHARACTERS.search(field.data):
+            raise ValidationError('Name cannot contain numbers or symbols.')
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():

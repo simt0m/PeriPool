@@ -15,6 +15,7 @@ def home():
     return render_template('index.html')
 
 @catalogue.route('/catalogue')
+@login_required
 def catalogue_view():
     """Render the item model catalogue."""
     item_models = (

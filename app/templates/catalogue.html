@@ -42,20 +42,14 @@
                     {% endif %}
                 </p>
 
-                {% if current_user.is_authenticated %}
-                    {% if item_model.available_units > 0 %}
-                        <form method="post" action="{{ url_for('catalogue.borrow_item', item_model_id=item_model.id) }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% if item_model.available_units > 0 %}
+                    <form method="post" action="{{ url_for('catalogue.borrow_item', item_model_id=item_model.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                            <button type="submit">Borrow this item</button>
-                        </form>
-                    {% else %}
-                        <p>This item is currently unavailable.</p>
-                    {% endif %}
+                        <button type="submit">Borrow this item</button>
+                    </form>
                 {% else %}
-                    <p>
-                        <a href="{{ url_for('auth.login') }}">Log in</a> to borrow this item.
-                    </p>
+                    <p>This item is currently unavailable.</p>
                 {% endif %}
             </article>
         {% endfor %}

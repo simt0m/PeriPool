@@ -61,3 +61,96 @@ def test_admin_route_blocks_regular_user(client, seeded_data):
 
     assert response.status_code == 403
     assert b'Access denied' in response.data
+
+
+def test_registration_rejects_name_with_digits(client):
+    """Test that a name containing digits is rejected."""
+    response = client.post(
+        '/register',
+        data={
+            'name': 'User123',
+            'email': 'digits@example.com',
+            'password': 'Password123!',
+            'confirm_password': 'Password123!',
+        },
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b'Name cannot contain numbers or symbols' in response.data
+
+
+def test_registration_rejects_name_with_symbols(client):
+    """Test that a name containing symbols is rejected."""
+    response = client.post(
+        '/register',
+        data={
+            'name': 'User@Name',
+            'email': 'symbols@example.com',
+            'password': 'Password123!',
+            'confirm_password': 'Password123!',
+        },
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b'Name cannot contain numbers or symbols' in response.data
+
+
+def test_registration_accepts_accented_name(app, client):
+    """Test that an accented international name is accepted, not rejected."""
+    response = client.post(
+        '/register',
+        data={
+            'name': 'José François',
+            'email': 'jose@example.com',
+            'password': 'Password123!',
+            'confirm_password': 'Password123!',
+        },
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b'Account created successfully' in response.data
+
+    with app.app_context():
+        assert User.query.filter_by(email='jose@example.com').first() is not None
+
+
+def test_registration_rejects_short_name(client):
+    """Test that a single-character name is rejected."""
+    response = client.post(
+        '/register',
+        data={
+            'name': 'A',
+            'email': 'short@example.com',
+            'password': 'Password123!',
+            'confirm_password': 'Password123!',
+        },
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b'Account created successfully' not in response.data
+
+
+def test_catalogue_requires_login(client):
+    """Test that the catalogue is not accessible to anonymous visitors."""
+    response = client.get('/catalogue')
+
+    assert response.status_code == 302
+    assert '/login' in response.headers['Location']
+
+
+def test_catalogue_accessible_when_logged_in(client, seeded_data):
+    """Test that a logged-in user can view the catalogue."""
+    login(
+        client,
+        seeded_data['employee_email'],
+        'EmployeePass123!'
+    )
+
+    response = client.get('/catalogue')
+
+    assert response.status_code == 200
+    assert b'Peripheral Catalogue' in response.data
