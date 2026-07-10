@@ -46,6 +46,19 @@
                     <form method="post" action="{{ url_for('catalogue.borrow_item', item_model_id=item_model.id) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
+                        <p>
+                            <label for="due_date_{{ item_model.id }}">Return by</label><br>
+                            <input
+                                type="date"
+                                id="due_date_{{ item_model.id }}"
+                                name="due_date"
+                                min="{{ min_due_date }}"
+                                max="{{ max_due_date }}"
+                                value="{{ min_due_date }}"
+                                required
+                            >
+                        </p>
+
                         <button type="submit">Borrow this item</button>
                     </form>
                 {% else %}

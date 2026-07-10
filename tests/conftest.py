@@ -1,4 +1,5 @@
 import re
+from datetime import date, timedelta
 
 import pytest
 
@@ -156,6 +157,11 @@ def get_csrf_token(client, url):
     response = client.get(url)
     match = re.search(rb'name="csrf_token"[^>]*value="([^"]+)"', response.data)
     return match.group(1).decode() if match else ''
+
+
+def future_due_date(days=3):
+    """Return an ISO date string a few days from now, for borrow form data."""
+    return (date.today() + timedelta(days=days)).isoformat()
 
 
 def login(client, email, password):

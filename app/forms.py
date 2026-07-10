@@ -1,15 +1,20 @@
 import re
+from datetime import timedelta
 
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, DecimalField, EmailField, PasswordField, SelectField, StringField, TextAreaField
+from wtforms import BooleanField, DateField, DecimalField, EmailField, PasswordField, SelectField, StringField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional, ValidationError
 
 from .extensions import db
-from .models import Category, ItemModel, ItemUnit, User
+from .models import Category, ItemModel, ItemUnit, User, get_utc_now
 
 REVIEW_RATING_CHOICES = [(rating, str(rating)) for rating in range(1, 6)]
 
 ITEM_UNIT_ADMIN_STATUSES = ['available', 'maintenance', 'inactive']
+
+# How far ahead a borrower may choose a return date. Long enough to cover a
+# typical loan, short enough that inventory doesn't disappear for months.
+MAX_BORROW_DAYS = 30
 
 # Blocks digits and obviously-wrong symbols, rather than only allowing a fixed
 # set of characters — an allow-list here would reject legitimate accented
@@ -169,6 +174,26 @@ class ItemUnitForm(FlaskForm):
 
         if query.first():
             raise ValidationError('An item unit with that asset tag already exists.')
+
+
+class BorrowForm(FlaskForm):
+    """Validates the return-by date chosen when borrowing an item."""
+
+    due_date = DateField(
+        'Return by',
+        validators=[DataRequired(message='Please choose a return date.')],
+        render_kw={'required': True}
+    )
+
+    def validate_due_date(self, field):
+        today = get_utc_now().date()
+        latest = today + timedelta(days=MAX_BORROW_DAYS)
+
+        if field.data < today:
+            raise ValidationError('Return date cannot be in the past.')
+
+        if field.data > latest:
+            raise ValidationError(f'Return date cannot be more than {MAX_BORROW_DAYS} days away.')
 
 
 class ReviewForm(FlaskForm):

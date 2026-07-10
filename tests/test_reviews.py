@@ -1,11 +1,15 @@
 from app.models import ItemReview
-from tests.conftest import login
+from tests.conftest import future_due_date, login
 
 
 def test_user_can_review_borrowed_item(app, client, seeded_data):
     """Test that a user can leave a review for an item they have borrowed."""
     login(client, seeded_data['employee_email'], 'EmployeePass123!')
-    client.post(f'/borrow/{seeded_data["item_model_id"]}', follow_redirects=True)
+    client.post(
+        f'/borrow/{seeded_data["item_model_id"]}',
+        data={'due_date': future_due_date()},
+        follow_redirects=True
+    )
 
     response = client.post(
         f'/catalogue/{seeded_data["item_model_id"]}/review',
@@ -29,7 +33,11 @@ def test_user_can_review_borrowed_item(app, client, seeded_data):
 def test_resubmitting_a_review_updates_it(app, client, seeded_data):
     """Test that submitting a second review for the same item updates it, not duplicates it."""
     login(client, seeded_data['employee_email'], 'EmployeePass123!')
-    client.post(f'/borrow/{seeded_data["item_model_id"]}', follow_redirects=True)
+    client.post(
+        f'/borrow/{seeded_data["item_model_id"]}',
+        data={'due_date': future_due_date()},
+        follow_redirects=True
+    )
 
     client.post(
         f'/catalogue/{seeded_data["item_model_id"]}/review',
@@ -70,7 +78,11 @@ def test_review_blocked_without_prior_borrow(client, seeded_data):
 def test_out_of_range_rating_is_rejected(app, client, seeded_data):
     """Test that a rating outside 1-5 is rejected by the form."""
     login(client, seeded_data['employee_email'], 'EmployeePass123!')
-    client.post(f'/borrow/{seeded_data["item_model_id"]}', follow_redirects=True)
+    client.post(
+        f'/borrow/{seeded_data["item_model_id"]}',
+        data={'due_date': future_due_date()},
+        follow_redirects=True
+    )
 
     client.post(
         f'/catalogue/{seeded_data["item_model_id"]}/review',

@@ -13,7 +13,14 @@
         {{ render_field(form.name) }}
         {{ render_field(form.email) }}
         {{ render_field(form.password) }}
+        <ul class="password-requirements" aria-live="polite">
+            <li data-requirement="length" class="requirement-unmet">At least 8 characters</li>
+        </ul>
+
         {{ render_field(form.confirm_password) }}
+        <ul class="password-requirements" aria-live="polite">
+            <li data-requirement="match" class="requirement-unmet">Passwords match</li>
+        </ul>
 
         <button type="submit">Register</button>
     </form>

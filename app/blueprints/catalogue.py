@@ -1,10 +1,10 @@
-from datetime import timedelta
+from datetime import datetime, time, timedelta, timezone
 
 from flask import Blueprint, current_app, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..forms import ReviewForm
+from ..forms import MAX_BORROW_DAYS, BorrowForm, ReviewForm
 from ..models import BorrowRecord, ItemModel, ItemReview, ItemUnit, get_utc_now
 
 catalogue = Blueprint('catalogue', __name__)
@@ -25,7 +25,14 @@ def catalogue_view():
         .all()
     )
 
-    return render_template('catalogue.html', item_models=item_models)
+    today = get_utc_now().date()
+
+    return render_template(
+        'catalogue.html',
+        item_models=item_models,
+        min_due_date=today.isoformat(),
+        max_due_date=(today + timedelta(days=MAX_BORROW_DAYS)).isoformat()
+    )
 
 @catalogue.route('/borrow/<int:item_model_id>', methods=['POST'])
 @login_required
@@ -35,6 +42,13 @@ def borrow_item(item_model_id):
         id=item_model_id,
         is_active=True
     ).first_or_404()
+
+    form = BorrowForm()
+
+    if not form.validate_on_submit():
+        for error in form.due_date.errors:
+            flash(error, 'danger')
+        return redirect(url_for('catalogue.catalogue_view'))
 
     existing_borrow = (
         BorrowRecord.query
@@ -64,10 +78,12 @@ def borrow_item(item_model_id):
 
     available_unit.status = 'borrowed'
 
+    due_at = datetime.combine(form.due_date.data, time(23, 59, 59), tzinfo=timezone.utc)
+
     borrow_record = BorrowRecord(
         user_id=current_user.id,
         item_unit_id=available_unit.id,
-        due_at=get_utc_now() + timedelta(days=7),
+        due_at=due_at,
         status='active'
     )
 
