@@ -32,7 +32,7 @@ pip install -r requirements-dev.txt
 
 Copy `.env.example` to `.env` and set `SECRET_KEY`. A development fallback is used if you skip this, but don't rely on it outside local dev.
 
-Seed the database with some sample data (creates an admin login, admin@peripool.com / AdminPass123!, and an employee login, alex.carter@peripool.com / EmployeePass123!):
+Seed the database with some sample data (creates an admin login, admin@example.com / Password!1, and an employee login, user@example.com / Password!1):
 
 ```bash
 python -m scripts.reseed_database

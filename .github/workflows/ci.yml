@@ -72,8 +72,8 @@ jobs:
             csrf_token=$(echo "$login_page" | grep -o 'csrf_token"[^>]*value="[^"]*"' | grep -o 'value="[^"]*"' | head -1 | sed 's/value="//;s/"$//')
 
             curl -sb "$cookie_jar" -c "$cookie_jar" -X POST http://localhost:5000/login \
-              --data-urlencode "email=alex.carter@peripool.com" \
-              --data-urlencode "password=EmployeePass123!" \
+              --data-urlencode "email=user@example.com" \
+              --data-urlencode "password=Password!1" \
               --data-urlencode "csrf_token=$csrf_token" \
               -o /dev/null
 

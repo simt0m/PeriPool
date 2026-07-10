@@ -35,17 +35,17 @@ with app.app_context():
 
     admin = User(
         name="Admin User",
-        email="admin@peripool.com",
+        email="admin@example.com",
         is_admin=True,
     )
-    admin.set_password("AdminPass123!")
+    admin.set_password("Password!1")
 
     employee = User(
         name="Alex Carter",
-        email="alex.carter@peripool.com",
+        email="user@example.com",
         is_admin=False,
     )
-    employee.set_password("EmployeePass123!")
+    employee.set_password("Password!1")
 
     employee_two = User(
         name="Priya Shah",
@@ -428,6 +428,6 @@ with app.app_context():
 
     print("Database reseeded successfully.")
     print(f"Seeded {len(all_item_models)} item models across 5 categories with {len(all_item_units)} units.")
-    print("Admin login: admin@peripool.com / AdminPass123!")
-    print("Employee login: alex.carter@peripool.com / EmployeePass123!")
+    print("Admin login: admin@example.com / Password!1")
+    print("Employee login: user@example.com / Password!1")
     print("Employee login: priya.shah@peripool.com / EmployeePass123!")
