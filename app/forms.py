@@ -16,10 +16,18 @@ ITEM_UNIT_ADMIN_STATUSES = ['available', 'maintenance', 'inactive']
 # typical loan, short enough that inventory doesn't disappear for months.
 MAX_BORROW_DAYS = 30
 
+# Maximum number of items a single user may have on loan at once, so one
+# person can't tie up the entire shared pool of a scarce item.
+MAX_ACTIVE_BORROWS_PER_USER = 3
+
 # Blocks digits and obviously-wrong symbols, rather than only allowing a fixed
 # set of characters — an allow-list here would reject legitimate accented
 # names (e.g. "José", "François").
 _NAME_INVALID_CHARACTERS = re.compile(r"[0-9@#$%^&*_+=\[\]{}|\\/<>~`\"]")
+
+_PASSWORD_HAS_UPPERCASE = re.compile(r"[A-Z]")
+_PASSWORD_HAS_DIGIT = re.compile(r"[0-9]")
+_PASSWORD_HAS_SYMBOL = re.compile(r"[^A-Za-z0-9]")
 
 
 def _strip(value):
@@ -67,6 +75,16 @@ class RegisterForm(FlaskForm):
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():
             raise ValidationError('An account already exists for that email address.')
+
+    def validate_password(self, field):
+        if not _PASSWORD_HAS_UPPERCASE.search(field.data):
+            raise ValidationError('Password must include an uppercase letter.')
+
+        if not _PASSWORD_HAS_DIGIT.search(field.data):
+            raise ValidationError('Password must include a number.')
+
+        if not _PASSWORD_HAS_SYMBOL.search(field.data):
+            raise ValidationError('Password must include a symbol.')
 
 
 class LoginForm(FlaskForm):

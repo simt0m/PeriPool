@@ -395,10 +395,22 @@ Available stock is not stored directly on `item_models`. It is calculated by cou
 ### Borrowing rule
 An item unit can only be borrowed if its status is `available`.
 
+A user cannot hold two active borrows of the same item model at once, and
+cannot have more than `MAX_ACTIVE_BORROWS_PER_USER` (3, in `app/forms.py`)
+items on loan in total at once, so one person can't tie up the entire shared
+pool of a scarce item.
+
+When borrowing, the user chooses a return-by date. This date must fall
+between today and 30 days from today (`MAX_BORROW_DAYS` in `app/forms.py`) —
+this also guarantees `due_at` always falls after `borrowed_at`, since
+`borrowed_at` is set to the current moment and `due_at` cannot be earlier
+than the end of today.
+
 When an item is borrowed:
 - `item_units.status` changes to `borrowed`
 - a new `borrow_records` row is created
 - `borrow_records.status` is set to `active`
+- `borrow_records.due_at` is set to the end of the user's chosen return date
 - `borrow_records.returned_at` remains null
 
 When an item is returned:

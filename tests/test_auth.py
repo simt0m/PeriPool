@@ -97,6 +97,57 @@ def test_registration_rejects_name_with_symbols(client):
     assert b'Name cannot contain numbers or symbols' in response.data
 
 
+def test_registration_rejects_password_without_uppercase(client):
+    """Test that a password with no uppercase letter is rejected."""
+    response = client.post(
+        '/register',
+        data={
+            'name': 'New User',
+            'email': 'noupper@example.com',
+            'password': 'password123!',
+            'confirm_password': 'password123!',
+        },
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b'Password must include an uppercase letter' in response.data
+
+
+def test_registration_rejects_password_without_digit(client):
+    """Test that a password with no digit is rejected."""
+    response = client.post(
+        '/register',
+        data={
+            'name': 'New User',
+            'email': 'nodigit@example.com',
+            'password': 'Password!',
+            'confirm_password': 'Password!',
+        },
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b'Password must include a number' in response.data
+
+
+def test_registration_rejects_password_without_symbol(client):
+    """Test that a password with no symbol is rejected."""
+    response = client.post(
+        '/register',
+        data={
+            'name': 'New User',
+            'email': 'nosymbol@example.com',
+            'password': 'Password123',
+            'confirm_password': 'Password123',
+        },
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b'Password must include a symbol' in response.data
+
+
 def test_registration_accepts_accented_name(app, client):
     """Test that an accented international name is accepted, not rejected."""
     response = client.post(

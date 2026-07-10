@@ -1,8 +1,8 @@
 from datetime import date, timedelta
 
 from app.extensions import db
-from app.forms import MAX_BORROW_DAYS
-from app.models import BorrowRecord, ItemUnit
+from app.forms import MAX_ACTIVE_BORROWS_PER_USER, MAX_BORROW_DAYS
+from app.models import BorrowRecord, Category, ItemModel, ItemUnit
 from tests.conftest import future_due_date, login
 
 
@@ -90,6 +90,90 @@ def test_borrow_rejects_due_date_too_far_ahead(app, client, seeded_data):
         ).first()
 
         assert borrow_record is None
+
+
+def test_due_date_is_always_after_borrowed_at(app, client, seeded_data):
+    """Test that the return date is always after the borrow start date.
+
+    Guaranteed by construction (due_date can't be in the past, and due_at is
+    set to the end of that day), but asserted explicitly as its own rule.
+    """
+    login(
+        client,
+        seeded_data['employee_email'],
+        'EmployeePass123!'
+    )
+
+    client.post(
+        f'/borrow/{seeded_data["item_model_id"]}',
+        data={'due_date': future_due_date(days=0)},
+        follow_redirects=True
+    )
+
+    with app.app_context():
+        borrow_record = BorrowRecord.query.filter_by(
+            user_id=seeded_data['employee_id'],
+            status='active'
+        ).first()
+
+        assert borrow_record is not None
+        assert borrow_record.due_at > borrow_record.borrowed_at
+
+
+def test_borrow_blocked_after_reaching_active_limit(app, client, seeded_data):
+    """Test that a user cannot exceed the maximum number of active borrows."""
+    login(
+        client,
+        seeded_data['employee_email'],
+        'EmployeePass123!'
+    )
+
+    with app.app_context():
+        category = db.session.get(Category, seeded_data['category_id'])
+        extra_item_model_ids = []
+
+        for i in range(MAX_ACTIVE_BORROWS_PER_USER):
+            item_model = ItemModel(
+                category=category,
+                manufacturer='TestBrand',
+                model_name=f'Limit Test Model {i}',
+                is_active=True
+            )
+            db.session.add(item_model)
+            db.session.flush()
+
+            db.session.add(ItemUnit(
+                item_model=item_model,
+                asset_tag=f'PP-LIMIT-{i}',
+                status='available'
+            ))
+            db.session.commit()
+
+            extra_item_model_ids.append(item_model.id)
+
+    for item_model_id in extra_item_model_ids:
+        client.post(
+            f'/borrow/{item_model_id}',
+            data={'due_date': future_due_date()},
+            follow_redirects=True
+        )
+
+    response = client.post(
+        f'/borrow/{seeded_data["item_model_id"]}',
+        data={'due_date': future_due_date()},
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert f'You already have {MAX_ACTIVE_BORROWS_PER_USER} items on loan'.encode() in response.data
+
+    with app.app_context():
+        active_count = BorrowRecord.query.filter_by(
+            user_id=seeded_data['employee_id'],
+            status='active'
+        ).count()
+
+        assert active_count == MAX_ACTIVE_BORROWS_PER_USER
 
 
 def test_duplicate_active_borrow_is_blocked(app, client, seeded_data):

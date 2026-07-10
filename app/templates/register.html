@@ -15,6 +15,9 @@
         {{ render_field(form.password) }}
         <ul class="password-requirements" aria-live="polite">
             <li data-requirement="length" class="requirement-unmet">At least 8 characters</li>
+            <li data-requirement="uppercase" class="requirement-unmet">An uppercase letter</li>
+            <li data-requirement="digit" class="requirement-unmet">A number</li>
+            <li data-requirement="symbol" class="requirement-unmet">A symbol</li>
         </ul>
 
         {{ render_field(form.confirm_password) }}

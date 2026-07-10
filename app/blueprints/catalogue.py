@@ -4,7 +4,7 @@ from flask import Blueprint, current_app, flash, redirect, render_template, url_
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..forms import MAX_BORROW_DAYS, BorrowForm, ReviewForm
+from ..forms import MAX_ACTIVE_BORROWS_PER_USER, MAX_BORROW_DAYS, BorrowForm, ReviewForm
 from ..models import BorrowRecord, ItemModel, ItemReview, ItemUnit, get_utc_now
 
 catalogue = Blueprint('catalogue', __name__)
@@ -48,6 +48,19 @@ def borrow_item(item_model_id):
     if not form.validate_on_submit():
         for error in form.due_date.errors:
             flash(error, 'danger')
+        return redirect(url_for('catalogue.catalogue_view'))
+
+    active_borrow_count = BorrowRecord.query.filter_by(
+        user_id=current_user.id,
+        status='active'
+    ).count()
+
+    if active_borrow_count >= MAX_ACTIVE_BORROWS_PER_USER:
+        flash(
+            f'You already have {MAX_ACTIVE_BORROWS_PER_USER} items on loan. '
+            'Return one before borrowing another.',
+            'warning'
+        )
         return redirect(url_for('catalogue.catalogue_view'))
 
     existing_borrow = (

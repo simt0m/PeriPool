@@ -18,6 +18,8 @@ Full database design documentation is available in:
 
 A pre-populated sample database is included at `docs/peripool_sample.db` — open it directly with any SQLite browser to inspect the schema and data without running anything, or copy it to `instance/peripool.db` to skip the seed step below.
 
+See also [Architecture & Use Cases](docs/architecture.md) for the system architecture, folder structure, and use case diagrams, and [Future Scalability: PostgreSQL](docs/postgres_migration.md) for a discussion of migrating off SQLite.
+
 ## Running It Locally
 
 ```bash
