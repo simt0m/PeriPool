@@ -57,7 +57,7 @@ ruff check .
 docker compose up --build
 ```
 
-This builds the image and serves the app at http://localhost:5000, same as running it locally. It needs a `.env` file (see above) — `SECRET_KEY` gets picked up from there. Database and log data persist in Docker volumes across restarts, so run the seed command inside the container the first time:
+This builds the image and serves the app at http://localhost:5000, same as running it locally. It needs a `.env` file (see above) — `SECRET_KEY` gets picked up from there. The container seeds sample data automatically on first boot if the database doesn't exist yet, so it works out of the box. To reset back to a fresh seeded state later:
 
 ```bash
 docker compose exec web python -m scripts.reseed_database

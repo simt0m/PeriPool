@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: peripool
+    runtime: docker
+    plan: free
+    envVars:
+      - key: FLASK_CONFIG
+        value: production
+      - key: SECRET_KEY
+        generateValue: true

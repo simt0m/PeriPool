@@ -53,7 +53,7 @@ jobs:
             peripool:ci
 
           success=0
-          for i in $(seq 1 10); do
+          for i in $(seq 1 20); do
             if curl -sf http://localhost:5000/ | grep -q "PeriPool"; then
               success=1
               break

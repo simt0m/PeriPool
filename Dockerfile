@@ -18,4 +18,4 @@ ENV HOME=/home/app
 ENV FLASK_CONFIG=production
 EXPOSE 5000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "run:app"]
+ENTRYPOINT ["sh", "entrypoint.sh"]
