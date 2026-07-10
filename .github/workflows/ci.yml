@@ -65,10 +65,23 @@ jobs:
             # The home page doesn't touch the database — separately check a page
             # that does, to catch a seeded-but-tableless database (a real bug
             # this once missed: the app could serve 200s while every DB-backed
-            # page 500s underneath it).
-            if ! curl -sf http://localhost:5000/catalogue | grep -q "Jabra"; then
+            # page 500s underneath it). The catalogue now requires login, so log
+            # in as the seeded employee user first and reuse that session.
+            cookie_jar=$(mktemp)
+            login_page=$(curl -sc "$cookie_jar" http://localhost:5000/login)
+            csrf_token=$(echo "$login_page" | grep -o 'csrf_token"[^>]*value="[^"]*"' | grep -o 'value="[^"]*"' | head -1 | sed 's/value="//;s/"$//')
+
+            curl -sb "$cookie_jar" -c "$cookie_jar" -X POST http://localhost:5000/login \
+              --data-urlencode "email=alex.carter@peripool.com" \
+              --data-urlencode "password=EmployeePass123!" \
+              --data-urlencode "csrf_token=$csrf_token" \
+              -o /dev/null
+
+            if ! curl -sf -b "$cookie_jar" http://localhost:5000/catalogue | grep -q "Jabra"; then
               success=0
             fi
+
+            rm -f "$cookie_jar"
           fi
 
           docker logs peripool-smoke
