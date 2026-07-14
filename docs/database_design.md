@@ -2,6 +2,7 @@
 
 ## 1. Design overview
 
+PeriPool's data model is built around six related entities: users, categories, item models, item units, borrow records, and item reviews. The sections below describe this model at increasing levels of detail, from the conceptual relationships through to the physical schema actually implemented in SQLite.
 
 ## 2. State transition model
 
@@ -397,12 +398,12 @@ An item unit can only be borrowed if its status is `available`.
 
 A user cannot hold two active borrows of the same item model at once, and
 cannot have more than `MAX_ACTIVE_BORROWS_PER_USER` (3, in `app/forms.py`)
-items on loan in total at once, so one person can't tie up the entire shared
-pool of a scarce item.
+items on loan in total, keeping any one item from being monopolised by a
+single borrower.
 
 When borrowing, the user chooses a return-by date. This date must fall
-between today and 30 days from today (`MAX_BORROW_DAYS` in `app/forms.py`) —
-this also guarantees `due_at` always falls after `borrowed_at`, since
+between today and 30 days from today (`MAX_BORROW_DAYS` in `app/forms.py`).
+This also guarantees `due_at` always falls after `borrowed_at`, since
 `borrowed_at` is set to the current moment and `due_at` cannot be earlier
 than the end of today.
 

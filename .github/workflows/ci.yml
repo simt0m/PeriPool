@@ -62,7 +62,7 @@ jobs:
           done
 
           if [ "$success" -eq 1 ]; then
-            # The home page doesn't touch the database — separately check a page
+            # The home page doesn't touch the database, so separately check a page
             # that does, to catch a seeded-but-tableless database (a real bug
             # this once missed: the app could serve 200s while every DB-backed
             # page 500s underneath it). The catalogue now requires login, so log

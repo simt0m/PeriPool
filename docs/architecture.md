@@ -44,18 +44,13 @@ flowchart TB
     GitHub -- push to main --> render
 ```
 
-Notes for the report:
+Design notes:
 
-- **Monolith, not microservices** — a deliberate choice for an application this
+- **Monolith, not microservices**: a deliberate choice for an application this
   size. Splitting into services would add network calls and deployment
   complexity without a corresponding benefit at this scale; modularisation is
   instead achieved inside the monolith via blueprints (see
   [Folder structure](#2-folder-structure--modularisation) below).
-- **SQLite on Render's free tier has no persistent disk** — the container's
-  filesystem is rebuilt on every deploy, so `entrypoint.sh` reseeds the
-  database automatically if it finds no users. This is a reasonable trade-off
-  for a teaching demo, and is the basis for the "future improvement" section
-  discussed in [postgres_migration.md](postgres_migration.md).
 
 ## 2. Folder structure & modularisation
 
@@ -86,31 +81,32 @@ peripool/
 **Why this structure, and how it helps:**
 
 - **Blueprints split by user-facing concern** (`auth`, `catalogue`, `admin`)
-  rather than by technical layer. Each blueprint is independently readable —
+  rather than by technical layer. Each blueprint is independently readable:
   understanding "what can an admin do" means reading one 260-line file, not
   hunting through a single monolithic routes file. This also scales cleanly:
   a new feature area (e.g. a `reports` blueprint) can be added without
   touching existing blueprints.
 - **`forms.py` centralises validation.** Every field's rules live in exactly
   one place, so a rule change (e.g. the password policy) only needs editing
-  once, and every route that uses that form gets the update automatically —
-  see [Section 3](#3-refactoring-evidence-forms--duplication) below for a
+  once, and every route that uses that form gets the update automatically.
+  See [Section 3](#3-refactoring-evidence-forms--duplication) below for a
   concrete before/after.
 - **`extensions.py` avoids circular imports** by creating each Flask
   extension instance once, then having `create_app()` call `.init_app(app)`
-  on each — the standard Flask application-factory pattern, which is also
-  what makes the app trivially testable (a fresh app per test, see
+  on each. This is the standard Flask application-factory pattern, and it's
+  also what makes the app trivially testable (a fresh app per test, see
   `tests/conftest.py`).
 - **`config.py` is environment-driven, not hardcoded**, so the same codebase
   runs correctly in development, automated tests, and production (Render)
-  by changing one environment variable (`FLASK_CONFIG`) — see
+  by changing one environment variable (`FLASK_CONFIG`). See
   [Section 4](#4-configuration-evidence) for the actual file.
 
 ## 3. Refactoring evidence: forms & duplication
 
 Before `forms.py` existed, every admin create/edit route manually pulled
-fields off `request.form`, validated them by hand, and flashed errors —
-repeated almost identically for categories, item models, and item units.
+fields off `request.form`, validated them by hand, and flashed errors. This
+logic was repeated almost identically for categories, item models, and item
+units.
 After the refactor, each entity gets one WTForms class and one route that
 handles both create and edit:
 
@@ -136,7 +132,7 @@ def category_form(category_id=None):
 
 The same shape (two routes decorating one function, `obj=` pre-fills the
 form on edit, `populate_obj` writes validated data back) is reused for
-`item_model_form` and `item_unit_form` — three entities, one pattern, no
+`item_model_form` and `item_unit_form`: three entities, one pattern, no
 copy-pasted validation logic.
 
 ## 4. Configuration evidence
@@ -156,7 +152,7 @@ class ProductionConfig(Config):
     FORCE_HTTPS = True
 ```
 
-`get_config()` fails fast — raising `RuntimeError` — if production is
+`get_config()` fails fast (raising `RuntimeError`) if production is
 selected without a `SECRET_KEY` in the environment, rather than silently
 falling back to an insecure default.
 
@@ -188,7 +184,7 @@ flowchart LR
     Admin --> UC14([View admin dashboard stats])
 ```
 
-An Administrator is a superset of Employee — every admin account can also
+An Administrator is a superset of Employee: every admin account can also
 browse, borrow, and review like a regular employee (the `admin_required`
 decorator only gates the admin-only routes; it does not remove access to
 the ordinary catalogue/dashboard routes).

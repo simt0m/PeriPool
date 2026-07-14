@@ -16,9 +16,9 @@ Full database design documentation is available in:
 
 [Database Design](docs/database_design.md)
 
-A pre-populated sample database is included at `docs/peripool_sample.db` — open it directly with any SQLite browser to inspect the schema and data without running anything, or copy it to `instance/peripool.db` to skip the seed step below.
+A pre-populated sample database is included at `docs/peripool_sample.db`. Open it directly with any SQLite browser to inspect the schema and data without running anything, or copy it to `instance/peripool.db` to skip the seed step below.
 
-See also [Architecture & Use Cases](docs/architecture.md) for the system architecture, folder structure, and use case diagrams, and [Future Scalability: PostgreSQL](docs/postgres_migration.md) for a discussion of migrating off SQLite.
+See also [Architecture & Use Cases](docs/architecture.md) for the system architecture, folder structure, and use case diagrams.
 
 ## Running It Locally
 
@@ -59,7 +59,7 @@ ruff check .
 docker compose up --build
 ```
 
-This builds the image and serves the app at http://localhost:5000, same as running it locally. It needs a `.env` file (see above) — `SECRET_KEY` gets picked up from there. The container seeds sample data automatically on first boot if the database doesn't exist yet, so it works out of the box. To reset back to a fresh seeded state later:
+This builds the image and serves the app at http://localhost:5000, same as running it locally. It needs a `.env` file (see above); `SECRET_KEY` gets picked up from there. The container seeds sample data automatically on first boot if the database doesn't exist yet, so it works out of the box. To reset back to a fresh seeded state later:
 
 ```bash
 docker compose exec web python -m scripts.reseed_database

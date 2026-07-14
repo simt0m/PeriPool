@@ -21,7 +21,7 @@ MAX_BORROW_DAYS = 30
 MAX_ACTIVE_BORROWS_PER_USER = 3
 
 # Blocks digits and obviously-wrong symbols, rather than only allowing a fixed
-# set of characters — an allow-list here would reject legitimate accented
+# set of characters. An allow-list here would reject legitimate accented
 # names (e.g. "José", "François").
 _NAME_INVALID_CHARACTERS = re.compile(r"[0-9@#$%^&*_+=\[\]{}|\\/<>~`\"]")
 
