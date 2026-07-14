@@ -54,6 +54,43 @@ with app.app_context():
     )
     employee_two.set_password("EmployeePass123!")
 
+    # Additional employees, each with their own borrow history, to make the
+    # admin Users and Borrow Records pages reflect a realistic team size.
+    marcus = User(name="Marcus Webb", email="marcus.webb@peripool.com", is_admin=False)
+    marcus.set_password("EmployeePass123!")
+
+    sophie = User(name="Sophie Chen", email="sophie.chen@peripool.com", is_admin=False)
+    sophie.set_password("EmployeePass123!")
+
+    daniel = User(name="Daniel Osei", email="daniel.osei@peripool.com", is_admin=False)
+    daniel.set_password("EmployeePass123!")
+
+    emma = User(name="Emma Whitfield", email="emma.whitfield@peripool.com", is_admin=False)
+    emma.set_password("EmployeePass123!")
+
+    ryan = User(name="Ryan Patel", email="ryan.patel@peripool.com", is_admin=False)
+    ryan.set_password("EmployeePass123!")
+
+    lauren = User(name="Lauren Kowalski", email="lauren.kowalski@peripool.com", is_admin=False)
+    lauren.set_password("EmployeePass123!")
+
+    james = User(name="James Okafor", email="james.okafor@peripool.com", is_admin=False)
+    james.set_password("EmployeePass123!")
+
+    natalie = User(name="Natalie Fischer", email="natalie.fischer@peripool.com", is_admin=False)
+    natalie.set_password("EmployeePass123!")
+
+    # Employees with no borrow or review history at all, so the sample data
+    # also reflects accounts that have registered but never borrowed anything.
+    oliver = User(name="Oliver Bennett", email="oliver.bennett@peripool.com", is_admin=False)
+    oliver.set_password("EmployeePass123!")
+
+    chloe = User(name="Chloe Ramirez", email="chloe.ramirez@peripool.com", is_admin=False)
+    chloe.set_password("EmployeePass123!")
+
+    tom = User(name="Tom Nakamura", email="tom.nakamura@peripool.com", is_admin=False)
+    tom.set_password("EmployeePass123!")
+
     headset_category = Category(
         name="Headsets",
         description="Audio devices for calls, meetings, and hybrid working."
@@ -333,7 +370,7 @@ with app.app_context():
 
     returned_borrow = BorrowRecord(
         user=employee,
-        item_unit=logitech_c920s_units[2],
+        item_unit=anker_c200_units[0],
         borrowed_at=get_utc_now() - timedelta(days=14),
         due_at=get_utc_now() - timedelta(days=7),
         returned_at=get_utc_now() - timedelta(days=8),
@@ -358,10 +395,85 @@ with app.app_context():
 
     priya_returned_borrow = BorrowRecord(
         user=employee_two,
-        item_unit=logitech_zone_units[1],
+        item_unit=surface_keyboard_units[0],
         borrowed_at=get_utc_now() - timedelta(days=20),
         due_at=get_utc_now() - timedelta(days=13),
         returned_at=get_utc_now() - timedelta(days=15),
+        status="returned",
+    )
+
+    # Item units flip to "borrowed" for the new employees' active borrows,
+    # matching the pattern used above for active_borrow/overdue_borrow.
+    jabra_55_units[0].status = "borrowed"
+    dell_wb7022_units[0].status = "borrowed"
+    surface_precision_units[0].status = "borrowed"
+    keychron_k8_units[0].status = "borrowed"
+
+    marcus_borrow = BorrowRecord(
+        user=marcus,
+        item_unit=jabra_55_units[0],
+        borrowed_at=get_utc_now(),
+        due_at=get_utc_now() + timedelta(days=7),
+        status="active",
+    )
+
+    sophie_borrow = BorrowRecord(
+        user=sophie,
+        item_unit=sennheiser_sc165_units[0],
+        borrowed_at=get_utc_now() - timedelta(days=12),
+        due_at=get_utc_now() - timedelta(days=5),
+        returned_at=get_utc_now() - timedelta(days=6),
+        status="returned",
+    )
+
+    daniel_borrow = BorrowRecord(
+        user=daniel,
+        item_unit=dell_wb7022_units[0],
+        borrowed_at=get_utc_now(),
+        due_at=get_utc_now() + timedelta(days=7),
+        status="active",
+    )
+
+    emma_borrow = BorrowRecord(
+        user=emma,
+        item_unit=mx_anywhere_units[0],
+        borrowed_at=get_utc_now() - timedelta(days=9),
+        due_at=get_utc_now() - timedelta(days=2),
+        returned_at=get_utc_now() - timedelta(days=3),
+        status="returned",
+    )
+
+    ryan_borrow = BorrowRecord(
+        user=ryan,
+        item_unit=surface_precision_units[0],
+        borrowed_at=get_utc_now(),
+        due_at=get_utc_now() + timedelta(days=7),
+        status="active",
+    )
+
+    lauren_borrow = BorrowRecord(
+        user=lauren,
+        item_unit=dell_kb216_units[0],
+        borrowed_at=get_utc_now() - timedelta(days=18),
+        due_at=get_utc_now() - timedelta(days=11),
+        returned_at=get_utc_now() - timedelta(days=12),
+        status="returned",
+    )
+
+    james_borrow = BorrowRecord(
+        user=james,
+        item_unit=keychron_k8_units[0],
+        borrowed_at=get_utc_now(),
+        due_at=get_utc_now() + timedelta(days=7),
+        status="active",
+    )
+
+    natalie_borrow = BorrowRecord(
+        user=natalie,
+        item_unit=caldigit_ts4_units[0],
+        borrowed_at=get_utc_now() - timedelta(days=15),
+        due_at=get_utc_now() - timedelta(days=8),
+        returned_at=get_utc_now() - timedelta(days=9),
         status="returned",
     )
 
@@ -402,12 +514,42 @@ with app.app_context():
             rating=5,
             comment="Great typing feel and the backlight is handy in low light.",
         ),
+        ItemReview(
+            user=marcus,
+            item_model=jabra_55,
+            rating=4,
+            comment="Good everyday headset, does the job for regular calls.",
+        ),
+        ItemReview(
+            user=sophie,
+            item_model=sennheiser_sc165,
+            rating=5,
+            comment="Reliable wired headset, no connectivity issues at all.",
+        ),
+        ItemReview(
+            user=ryan,
+            item_model=surface_precision,
+            rating=4,
+            comment="Comfortable shape, buttons are easy to customise.",
+        ),
+    ]
+
+    all_employees = [
+        employee, employee_two,
+        marcus, sophie, daniel, emma, ryan, lauren, james, natalie,
+        oliver, chloe, tom,
+    ]
+
+    all_borrow_records = [
+        active_borrow, overdue_borrow, returned_borrow,
+        priya_active_borrow, priya_second_active_borrow, priya_returned_borrow,
+        marcus_borrow, sophie_borrow, daniel_borrow, emma_borrow,
+        ryan_borrow, lauren_borrow, james_borrow, natalie_borrow,
     ]
 
     db.session.add_all([
         admin,
-        employee,
-        employee_two,
+        *all_employees,
         headset_category,
         webcam_category,
         mouse_category,
@@ -415,12 +557,7 @@ with app.app_context():
         dock_category,
         *all_item_models,
         *all_item_units,
-        active_borrow,
-        overdue_borrow,
-        returned_borrow,
-        priya_active_borrow,
-        priya_second_active_borrow,
-        priya_returned_borrow,
+        *all_borrow_records,
         *reviews,
     ])
 
@@ -428,6 +565,7 @@ with app.app_context():
 
     print("Database reseeded successfully.")
     print(f"Seeded {len(all_item_models)} item models across 5 categories with {len(all_item_units)} units.")
+    print(f"Seeded {len(all_employees) + 1} users ({len(all_employees)} employees, 1 admin).")
     print("Admin login: admin@example.com / Password!1")
     print("Employee login: user@example.com / Password!1")
-    print("Employee login: priya.shah@peripool.com / EmployeePass123!")
+    print("Other employee logins use <firstname.lastname>@peripool.com / EmployeePass123!")
