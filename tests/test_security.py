@@ -74,6 +74,7 @@ def test_admin_routes_reject_non_admin_user(client, seeded_data):
         f'/admin/item-units/{seeded_data["item_unit_id"]}/edit',
         f'/admin/item-units/{seeded_data["item_unit_id"]}/delete',
         f'/admin/users/{seeded_data["admin_id"]}/toggle-active',
+        f'/admin/users/{seeded_data["admin_id"]}/toggle-admin',
     ]
 
     for url in admin_routes:

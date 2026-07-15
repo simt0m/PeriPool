@@ -38,6 +38,8 @@ Seed the database with some sample data (creates an admin login, admin@example.c
 python -m scripts.reseed_database
 ```
 
+(`python scripts/reseed_database.py` works too, if you'd rather run it directly.)
+
 Then start the app:
 
 ```bash

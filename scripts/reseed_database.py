@@ -1,6 +1,13 @@
 import itertools
+import sys
 from collections import defaultdict
 from datetime import timedelta
+from pathlib import Path
+
+# Allows running this script directly (`python scripts/reseed_database.py`),
+# not just as a module (`python -m scripts.reseed_database`), by putting the
+# project root on the import path before `app` is imported below.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app import create_app
 from app.extensions import db
@@ -124,7 +131,7 @@ with app.app_context():
         model_name="Evolve2 65",
         description="Wireless headset suitable for Teams calls and hybrid meetings.",
         cost=149.99,
-        image_url=None,
+        image_url="/static/images/items/jabra-evolve2-65.jpg",
     )
     jabra_65_units = make_units(jabra_65, "HS", ["available", "available", "borrowed"])
 
@@ -134,7 +141,7 @@ with app.app_context():
         model_name="Evolve2 55",
         description="Lightweight headset for office calls and general use.",
         cost=119.99,
-        image_url=None,
+        image_url="/static/images/items/jabra-evolve2-55.jpg",
     )
     jabra_55_units = make_units(jabra_55, "HS", ["available", "maintenance"])
 
@@ -144,7 +151,7 @@ with app.app_context():
         model_name="Voyager Focus 2",
         description="Active noise-cancelling headset for open-plan offices.",
         cost=229.99,
-        image_url=None,
+        image_url="/static/images/items/poly-voyager-focus-2.jpg",
     )
     poly_focus_units = make_units(poly_focus, "HS", ["available", "available", "borrowed"])
 
@@ -154,7 +161,7 @@ with app.app_context():
         model_name="Zone Wireless",
         description="Wireless headset with a boom mic for busy environments.",
         cost=179.99,
-        image_url=None,
+        image_url="/static/images/items/logitech-zone-wireless.jpg",
     )
     logitech_zone_units = make_units(logitech_zone, "HS", ["available", "borrowed"])
 
@@ -164,7 +171,7 @@ with app.app_context():
         model_name="SC 165",
         description="Wired stereo headset for desk-based calls.",
         cost=99.99,
-        image_url=None,
+        image_url="/static/images/items/sennheiser-sc-165.jpg",
     )
     sennheiser_sc165_units = make_units(sennheiser_sc165, "HS", ["available", "available"])
 
@@ -176,7 +183,7 @@ with app.app_context():
         model_name="Brio",
         description="High-quality 4K webcam for video meetings.",
         cost=139.99,
-        image_url=None,
+        image_url="/static/images/items/logitech-brio.jpg",
     )
     logitech_brio_units = make_units(logitech_brio, "WC", ["available", "borrowed"])
 
@@ -186,7 +193,7 @@ with app.app_context():
         model_name="C920s",
         description="Full HD webcam with a built-in privacy shutter.",
         cost=79.99,
-        image_url=None,
+        image_url="/static/images/items/logitech-c920s.jpg",
     )
     logitech_c920s_units = make_units(logitech_c920s, "WC", ["available", "available", "borrowed"])
 
@@ -196,7 +203,7 @@ with app.app_context():
         model_name="WB7022",
         description="4K webcam with auto-framing for meeting rooms.",
         cost=129.99,
-        image_url=None,
+        image_url="/static/images/items/dell-wb7022.jpg",
     )
     dell_wb7022_units = make_units(dell_wb7022, "WC", ["available", "maintenance"])
 
@@ -206,7 +213,7 @@ with app.app_context():
         model_name="PowerConf C200",
         description="Compact 2K webcam for hybrid working setups.",
         cost=69.99,
-        image_url=None,
+        image_url="/static/images/items/anker-powerconf-c200.jpg",
     )
     anker_c200_units = make_units(anker_c200, "WC", ["available", "available"])
 
@@ -218,7 +225,7 @@ with app.app_context():
         model_name="MX Master 3",
         description="Ergonomic wireless mouse for productivity work.",
         cost=89.99,
-        image_url=None,
+        image_url="/static/images/items/logitech-mx-master-3.jpg",
     )
     mx_master_units = make_units(mx_master, "MS", ["borrowed", "available"])
 
@@ -228,7 +235,7 @@ with app.app_context():
         model_name="MX Anywhere 3",
         description="Compact wireless mouse suited to travel and hot-desking.",
         cost=69.99,
-        image_url=None,
+        image_url="/static/images/items/logitech-mx-anywhere-3.jpg",
     )
     mx_anywhere_units = make_units(mx_anywhere, "MS", ["available", "available"])
 
@@ -238,7 +245,7 @@ with app.app_context():
         model_name="Surface Precision Mouse",
         description="Precision mouse with customisable buttons for multitasking.",
         cost=99.99,
-        image_url=None,
+        image_url="/static/images/items/surface-precision-mouse.jpg",
     )
     surface_precision_units = make_units(surface_precision, "MS", ["available", "borrowed"])
 
@@ -248,7 +255,7 @@ with app.app_context():
         model_name="M720 Triathlon",
         description="Multi-device wireless mouse for switching between machines.",
         cost=49.99,
-        image_url=None,
+        image_url="/static/images/items/logitech-m720-triathlon.jpg",
     )
     m720_triathlon_units = make_units(m720_triathlon, "MS", ["available", "available", "maintenance"])
 
@@ -260,7 +267,7 @@ with app.app_context():
         model_name="MX Keys",
         description="Backlit wireless keyboard for office and hybrid use.",
         cost=109.99,
-        image_url=None,
+        image_url="/static/images/items/logitech-mx-keys.jpg",
     )
     mx_keys_units = make_units(mx_keys, "KB", ["available", "available", "borrowed"])
 
@@ -270,7 +277,7 @@ with app.app_context():
         model_name="Surface Keyboard",
         description="Slim wireless keyboard for desk setups.",
         cost=89.99,
-        image_url=None,
+        image_url="/static/images/items/surface-keyboard.jpg",
     )
     surface_keyboard_units = make_units(surface_keyboard, "KB", ["available", "available"])
 
@@ -280,7 +287,7 @@ with app.app_context():
         model_name="K8",
         description="Mechanical keyboard for staff who prefer tactile typing.",
         cost=79.99,
-        image_url=None,
+        image_url="/static/images/items/keychron-k8.jpg",
     )
     keychron_k8_units = make_units(keychron_k8, "KB", ["available", "maintenance"])
 
@@ -290,7 +297,7 @@ with app.app_context():
         model_name="KB216",
         description="Standard wired keyboard for general office use.",
         cost=19.99,
-        image_url=None,
+        image_url="/static/images/items/dell-kb216.jpg",
     )
     dell_kb216_units = make_units(dell_kb216, "KB", ["available", "available", "available"])
 
@@ -302,7 +309,7 @@ with app.app_context():
         model_name="WD19",
         description="USB-C docking station for desk setups.",
         cost=169.99,
-        image_url=None,
+        image_url="/static/images/items/dell-wd19.jpg",
     )
     dell_dock_units = make_units(dell_dock, "DS", ["available", "available"])
 
@@ -312,7 +319,7 @@ with app.app_context():
         model_name="WD22TB4",
         description="Thunderbolt 4 docking station for higher-spec laptops.",
         cost=249.99,
-        image_url=None,
+        image_url="/static/images/items/dell-wd22tb4.jpg",
     )
     dell_wd22tb4_units = make_units(dell_wd22tb4, "DS", ["available", "borrowed"])
 
@@ -322,7 +329,7 @@ with app.app_context():
         model_name="TS4",
         description="High-throughput dock for demanding multi-monitor setups.",
         cost=329.99,
-        image_url=None,
+        image_url="/static/images/items/caldigit-ts4.jpg",
     )
     caldigit_ts4_units = make_units(caldigit_ts4, "DS", ["available", "maintenance"])
 
@@ -332,7 +339,7 @@ with app.app_context():
         model_name="PowerExpand Elite",
         description="13-in-1 docking station for expanding a single laptop port.",
         cost=199.99,
-        image_url=None,
+        image_url="/static/images/items/anker-powerexpand-elite.jpg",
     )
     anker_powerexpand_units = make_units(anker_powerexpand, "DS", ["available", "available"])
 
@@ -488,13 +495,11 @@ with app.app_context():
             user=employee,
             item_model=logitech_c920s,
             rating=4,
-            comment="Sharp picture in video calls, but a bit bulky to carry between desks.",
         ),
         ItemReview(
             user=employee,
             item_model=mx_master,
             rating=4,
-            comment="Very comfortable for long sessions, though the battery drains faster than expected.",
         ),
         ItemReview(
             user=employee_two,
@@ -506,7 +511,6 @@ with app.app_context():
             user=employee_two,
             item_model=logitech_zone,
             rating=3,
-            comment="Solid audio, but the headband is a little tight after a few hours.",
         ),
         ItemReview(
             user=employee_two,
@@ -518,19 +522,16 @@ with app.app_context():
             user=marcus,
             item_model=jabra_55,
             rating=4,
-            comment="Good everyday headset, does the job for regular calls.",
         ),
         ItemReview(
             user=sophie,
             item_model=sennheiser_sc165,
             rating=5,
-            comment="Reliable wired headset, no connectivity issues at all.",
         ),
         ItemReview(
             user=ryan,
             item_model=surface_precision,
             rating=4,
-            comment="Comfortable shape, buttons are easy to customise.",
         ),
     ]
 

@@ -2,7 +2,7 @@ from datetime import date, timedelta
 
 from app.extensions import db
 from app.forms import MAX_ACTIVE_BORROWS_PER_USER, MAX_BORROW_DAYS
-from app.models import BorrowRecord, Category, ItemModel, ItemUnit
+from app.models import BorrowRecord, Category, ItemModel, ItemUnit, get_utc_now
 from tests.conftest import future_due_date, login
 
 
@@ -251,3 +251,62 @@ def test_user_can_return_borrowed_item(app, client, seeded_data):
         assert borrow_record.status == 'returned'
         assert borrow_record.returned_at is not None
         assert item_unit.status == 'available'
+
+
+def test_returning_an_item_redirects_to_its_review_form(app, client, seeded_data):
+    """Test that returning an item takes the user straight to the review prompt."""
+    login(
+        client,
+        seeded_data['employee_email'],
+        'EmployeePass123!'
+    )
+
+    client.post(
+        f'/borrow/{seeded_data["item_model_id"]}',
+        data={'due_date': future_due_date()},
+        follow_redirects=True
+    )
+
+    with app.app_context():
+        active_record = BorrowRecord.query.filter_by(
+            user_id=seeded_data['employee_id'],
+            status='active'
+        ).first()
+        active_record_id = active_record.id
+
+    response = client.post(
+        f'/return/{active_record_id}',
+        follow_redirects=False
+    )
+
+    assert response.status_code == 302
+    assert response.headers['Location'] == f'/catalogue/{seeded_data["item_model_id"]}/review'
+
+    followed_response = client.get(response.headers['Location'])
+
+    assert b'Skip for now' in followed_response.data
+    assert b'Feel free to leave a review below' in followed_response.data
+
+
+def test_is_overdue_handles_a_freshly_queried_record(app, seeded_data):
+    """Test that is_overdue() doesn't raise on a datetime freshly loaded from the database.
+
+    SQLite drops timezone info on the round trip, so a naive `due_at` read
+    back from a fresh query must not be compared directly against the
+    timezone-aware value get_utc_now() returns.
+    """
+    with app.app_context():
+        overdue_record = BorrowRecord(
+            user_id=seeded_data['employee_id'],
+            item_unit_id=seeded_data['item_unit_id'],
+            due_at=get_utc_now() - timedelta(days=1),
+            status='active',
+        )
+        db.session.add(overdue_record)
+        db.session.commit()
+        overdue_record_id = overdue_record.id
+
+    with app.app_context():
+        fresh_record = db.session.get(BorrowRecord, overdue_record_id)
+        assert fresh_record.due_at.tzinfo is None
+        assert fresh_record.is_overdue() is True

@@ -1,11 +1,11 @@
 from datetime import datetime, time, timedelta, timezone
 
-from flask import Blueprint, current_app, flash, redirect, render_template, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from ..extensions import db
 from ..forms import MAX_ACTIVE_BORROWS_PER_USER, MAX_BORROW_DAYS, BorrowForm, ReviewForm
-from ..models import BorrowRecord, ItemModel, ItemReview, ItemUnit, get_utc_now
+from ..models import BorrowRecord, Category, ItemModel, ItemReview, ItemUnit, get_utc_now
 
 catalogue = Blueprint('catalogue', __name__)
 
@@ -17,19 +17,35 @@ def home():
 @catalogue.route('/catalogue')
 @login_required
 def catalogue_view():
-    """Render the item model catalogue."""
-    item_models = (
-        ItemModel.query
-        .filter_by(is_active=True)
-        .order_by(ItemModel.manufacturer, ItemModel.model_name)
+    """Render the item model catalogue, optionally filtered by category."""
+    selected_category = request.args.get('category')
+
+    categories = Category.query.order_by(Category.name).all()
+
+    category_counts = dict(
+        db.session.query(Category.name, db.func.count(ItemModel.id))
+        .join(ItemModel, ItemModel.category_id == Category.id)
+        .filter(ItemModel.is_active)
+        .group_by(Category.name)
         .all()
     )
+
+    item_models_query = ItemModel.query.filter_by(is_active=True)
+
+    if selected_category:
+        item_models_query = item_models_query.join(Category).filter(Category.name == selected_category)
+
+    item_models = item_models_query.order_by(ItemModel.manufacturer, ItemModel.model_name).all()
 
     today = get_utc_now().date()
 
     return render_template(
         'catalogue.html',
         item_models=item_models,
+        categories=categories,
+        category_counts=category_counts,
+        selected_category=selected_category,
+        total_active_count=sum(category_counts.values()),
         min_due_date=today.isoformat(),
         max_due_date=(today + timedelta(days=MAX_BORROW_DAYS)).isoformat()
     )
@@ -133,8 +149,8 @@ def return_item(borrow_record_id):
 
     current_app.logger.info(f'{current_user.email} returned unit {borrow_record.item_unit.asset_tag}')
 
-    flash('Item returned successfully.', 'success')
-    return redirect(url_for('catalogue.dashboard'))
+    flash('Item returned successfully. Feel free to leave a review below.', 'success')
+    return redirect(url_for('catalogue.review_item', item_model_id=borrow_record.item_unit.item_model_id))
 
 @catalogue.route('/dashboard')
 @login_required
@@ -157,10 +173,13 @@ def dashboard():
         .all()
     )
 
+    overdue_count = sum(1 for record in active_borrow_records if record.is_overdue())
+
     return render_template(
         'dashboard.html',
         active_borrow_records=active_borrow_records,
-        previous_borrow_records=previous_borrow_records
+        previous_borrow_records=previous_borrow_records,
+        overdue_count=overdue_count
     )
 
 @catalogue.route('/catalogue/<int:item_model_id>/review', methods=['GET', 'POST'])

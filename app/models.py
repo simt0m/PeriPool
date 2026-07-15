@@ -204,10 +204,17 @@ class BorrowRecord(db.Model):
 
     def is_overdue(self):
         """Return True when the active borrow record is overdue."""
+        due_at = self.due_at
+        if due_at.tzinfo is None:
+            # SQLite drops tzinfo on the round trip through the database;
+            # every due_at this app writes is UTC, so treat a naive value
+            # as UTC rather than comparing naive to aware and raising.
+            due_at = due_at.replace(tzinfo=timezone.utc)
+
         return (
             self.status == "active"
             and self.returned_at is None
-            and self.due_at < get_utc_now()
+            and due_at < get_utc_now()
         )
     
     def __repr__(self):

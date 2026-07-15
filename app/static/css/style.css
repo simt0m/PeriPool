@@ -131,6 +131,11 @@ a:hover {
     color: var(--color-accent);
 }
 
+.site-header nav a.active {
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
 main {
     max-width: var(--max-width);
     margin: 0 auto;
@@ -252,6 +257,17 @@ input[type="checkbox"] {
     vertical-align: middle;
 }
 
+small {
+    color: var(--color-text-muted);
+}
+
+code {
+    padding: 0.1rem 0.3rem;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius);
+    font-size: 0.85em;
+}
+
 .field-error {
     display: inline-block;
     margin-top: 0.25rem;
@@ -301,6 +317,11 @@ button:hover, .button:hover {
     background: var(--color-accent-hover);
 }
 
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* Destructive actions (deactivate/delete/suspend) always carry data-confirm */
 form[data-confirm] button {
     background: transparent;
@@ -312,19 +333,167 @@ form[data-confirm] button:hover {
     background: var(--color-danger-bg);
 }
 
-/* --- Catalogue cards --- */
+/* --- Catalogue: category filter --- */
 
-article {
-    padding: 1rem 0;
+.category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--color-border);
 }
 
-article:last-of-type {
-    border-bottom: none;
+.category-filter a {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    padding-bottom: 0.3rem;
 }
 
-article h3 {
-    margin-bottom: 0.5rem;
+.category-filter a:hover {
+    color: var(--color-accent);
+}
+
+.category-filter a.active {
+    color: var(--color-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+}
+
+/* --- Catalogue: card grid --- */
+
+.catalogue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 1rem;
+}
+
+.item-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.item-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.item-card-image {
+    width: 100%;
+    height: 9rem;
+    margin-bottom: 0.75rem;
+    object-fit: contain;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius);
+}
+
+.item-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-bottom: 0.75rem;
+    padding: 0.45rem;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius);
+    color: var(--color-accent);
+}
+
+.item-card-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.item-card-eyebrow {
+    margin: 0 0 0.15rem;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.item-card h3 {
+    margin: 0 0 0.6rem;
+}
+
+.badge {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge-available {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.badge-unavailable {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-text);
+}
+
+.item-card details {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.item-card summary {
+    cursor: pointer;
+    color: var(--color-accent);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.item-card details p {
+    margin: 0.5rem 0 0;
+    color: var(--color-text-muted);
+}
+
+.item-card form {
+    margin-top: auto;
+    max-width: none;
+}
+
+/* --- Stat tiles --- */
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-tile {
+    padding: 0.85rem 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+.stat-tile .stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stat-tile .stat-label {
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+}
+
+.stat-tile.stat-warning .stat-value {
+    color: var(--color-warning-text);
 }
 
 /* --- Small screens --- */
@@ -336,6 +505,10 @@ article h3 {
 
     main {
         padding-inline: 1rem;
+    }
+
+    .catalogue-grid {
+        grid-template-columns: 1fr;
     }
 
     table, thead, tbody, th, td, tr {

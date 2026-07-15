@@ -390,6 +390,9 @@ erDiagram
 ### User deletion
 Users should not normally be deleted because this could damage historical borrowing records. Instead, a user can be marked as inactive by setting `is_active` to false.
 
+### Admin suspension rule
+An active admin cannot be suspended directly. Admin access must be removed first (`is_admin` set to false), then the account can be suspended as normal. This prevents an inconsistent "suspended but still admin" state. An admin can never remove their own admin access or active status, which guarantees at least one admin always remains able to reverse any change.
+
 ### Item availability
 Available stock is not stored directly on `item_models`. It is calculated by counting related `item_units` where `status = 'available'`.
 

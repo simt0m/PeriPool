@@ -16,6 +16,17 @@
         </p>
     {% endif %}
 
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <span class="stat-value">{{ active_borrow_records|length }}</span>
+            <span class="stat-label">Active borrows</span>
+        </div>
+        <div class="stat-tile{{ ' stat-warning' if overdue_count > 0 }}">
+            <span class="stat-value">{{ overdue_count }}</span>
+            <span class="stat-label">Overdue</span>
+        </div>
+    </div>
+
     <h3>Current borrowed items</h3>
 
     {% if active_borrow_records %}

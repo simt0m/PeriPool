@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import category_icon %}
 
 {% block title %}PeriPool | Catalogue{% endblock %}
 
@@ -10,64 +11,89 @@
         Browse available peripheral models and check current availability.
     </p>
 
+    <nav class="category-filter">
+        <a href="{{ url_for('catalogue.catalogue_view') }}" class="{{ 'active' if not selected_category }}">
+            All ({{ total_active_count }})
+        </a>
+        {% for category in categories %}
+            <a
+                href="{{ url_for('catalogue.catalogue_view', category=category.name) }}"
+                class="{{ 'active' if selected_category == category.name }}"
+            >
+                {{ category.name }} ({{ category_counts.get(category.name, 0) }})
+            </a>
+        {% endfor %}
+    </nav>
+
     {% if item_models %}
-        {% for item_model in item_models %}
-            <article>
-                <h3>{{ item_model.manufacturer }} {{ item_model.model_name }}</h3>
-
-                <p>
-                    <strong>Category:</strong>
-                    {{ item_model.category.name }}
-                </p>
-
-                {% if item_model.description %}
-                    <p>
-                        <strong>Description:</strong>
-                        {{ item_model.description }}
-                    </p>
-                {% endif %}
-
-                <p>
-                    <strong>Availability:</strong>
-                    {{ item_model.available_units }} of {{ item_model.total_units }} available
-                </p>
-
-                <p>
-                    <strong>Average rating:</strong>
-                    {% if item_model.average_rating %}
-                        {{ item_model.average_rating }} / 5
-                        ({{ item_model.reviews|length }} review{{ 's' if item_model.reviews|length != 1 else '' }})
+        <div class="catalogue-grid">
+            {% for item_model in item_models %}
+                <article class="item-card">
+                    {% if item_model.image_url %}
+                        <img
+                            class="item-card-image"
+                            src="{{ item_model.image_url }}"
+                            alt="{{ item_model.manufacturer }} {{ item_model.model_name }}"
+                        >
                     {% else %}
-                        No ratings yet
+                        <div class="item-card-icon">{{ category_icon(item_model.category.name) }}</div>
                     {% endif %}
-                </p>
 
-                {% if item_model.available_units > 0 %}
-                    <form method="post" action="{{ url_for('catalogue.borrow_item', item_model_id=item_model.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <p class="item-card-eyebrow">{{ item_model.category.name }}</p>
+                    <h3>{{ item_model.manufacturer }} {{ item_model.model_name }}</h3>
+
+                    {% if item_model.available_units > 0 %}
+                        <span class="badge badge-available">Available</span>
+                    {% else %}
+                        <span class="badge badge-unavailable">Not available</span>
+                    {% endif %}
+
+                    <details>
+                        <summary>Details</summary>
+
+                        {% if item_model.description %}
+                            <p>{{ item_model.description }}</p>
+                        {% endif %}
+
+                        <p>{{ item_model.available_units }} of {{ item_model.total_units }} in stock.</p>
 
                         <p>
-                            <label for="due_date_{{ item_model.id }}">Return by</label><br>
-                            <input
-                                type="date"
-                                id="due_date_{{ item_model.id }}"
-                                name="due_date"
-                                min="{{ min_due_date }}"
-                                max="{{ max_due_date }}"
-                                value="{{ min_due_date }}"
-                                required
-                            >
+                            {% if item_model.average_rating %}
+                                {{ item_model.average_rating }} / 5
+                                ({{ item_model.reviews|length }} review{{ 's' if item_model.reviews|length != 1 else '' }})
+                            {% else %}
+                                No ratings yet
+                            {% endif %}
                         </p>
+                    </details>
 
-                        <button type="submit">Borrow this item</button>
-                    </form>
-                {% else %}
-                    <p>This item is currently unavailable.</p>
-                {% endif %}
-            </article>
-        {% endfor %}
+                    {% if item_model.available_units > 0 %}
+                        <form method="post" action="{{ url_for('catalogue.borrow_item', item_model_id=item_model.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <p>
+                                <label for="due_date_{{ item_model.id }}">Return by</label><br>
+                                <input
+                                    type="date"
+                                    id="due_date_{{ item_model.id }}"
+                                    name="due_date"
+                                    min="{{ min_due_date }}"
+                                    max="{{ max_due_date }}"
+                                    value="{{ min_due_date }}"
+                                    required
+                                >
+                            </p>
+
+                            <button type="submit">Borrow this item</button>
+                        </form>
+                    {% else %}
+                        <p>This item is currently unavailable.</p>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
     {% else %}
-        <p>No catalogue items are currently available.</p>
+        <p>No catalogue items match this filter.</p>
     {% endif %}
 </section>
 {% endblock %}

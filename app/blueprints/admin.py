@@ -72,6 +72,10 @@ def toggle_user_active(user_id):
         flash('You cannot change your own active status.', 'warning')
         return redirect(url_for('admin.users'))
 
+    if user.is_active and user.is_admin:
+        flash('Remove admin access before suspending this user.', 'warning')
+        return redirect(url_for('admin.users'))
+
     user.is_active = not user.is_active
 
     db.session.commit()
@@ -80,6 +84,31 @@ def toggle_user_active(user_id):
     current_app.logger.info(f'{current_user.email} {action} user: {user.email}')
 
     flash(f'User account {action} successfully.', 'success')
+    return redirect(url_for('admin.users'))
+
+@admin.route('/users/<int:user_id>/toggle-admin', methods=['POST'])
+@admin_required
+def toggle_user_admin(user_id):
+    """Grant or revoke administrator status for a user.
+
+    An admin cannot change their own admin status, which is the only
+    safeguard needed: whoever performs the action always remains an admin
+    themselves, so the system can never end up with zero admins this way.
+    """
+    user = db.get_or_404(User, user_id)
+
+    if user.id == current_user.id:
+        flash('You cannot change your own admin status.', 'warning')
+        return redirect(url_for('admin.users'))
+
+    user.is_admin = not user.is_admin
+
+    db.session.commit()
+
+    action = 'granted admin access to' if user.is_admin else 'revoked admin access from'
+    current_app.logger.info(f'{current_user.email} {action} {user.email}')
+
+    flash(f"{'Granted' if user.is_admin else 'Revoked'} admin access for {user.name}.", 'success')
     return redirect(url_for('admin.users'))
 
 @admin.route('/inventory')

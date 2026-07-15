@@ -20,30 +20,63 @@
     </ul>
 
     <h3>Users</h3>
-    <ul>
-        <li>Total users: {{ total_users }}</li>
-        <li>Active users: {{ active_users }}</li>
-    </ul>
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <span class="stat-value">{{ total_users }}</span>
+            <span class="stat-label">Total users</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-value">{{ active_users }}</span>
+            <span class="stat-label">Active users</span>
+        </div>
+    </div>
 
     <h3>Catalogue</h3>
-    <ul>
-        <li>Total categories: {{ total_categories }}</li>
-        <li>Total item models: {{ total_item_models }}</li>
-        <li>Active item models: {{ active_item_models }}</li>
-    </ul>
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <span class="stat-value">{{ total_categories }}</span>
+            <span class="stat-label">Categories</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-value">{{ total_item_models }}</span>
+            <span class="stat-label">Total item models</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-value">{{ active_item_models }}</span>
+            <span class="stat-label">Active item models</span>
+        </div>
+    </div>
 
     <h3>Item units</h3>
-    <ul>
-        <li>Total item units: {{ total_item_units }}</li>
-        <li>Available item units: {{ available_item_units }}</li>
-        <li>Borrowed item units: {{ borrowed_item_units }}</li>
-        <li>Maintenance item units: {{ maintenance_item_units }}</li>
-    </ul>
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <span class="stat-value">{{ total_item_units }}</span>
+            <span class="stat-label">Total item units</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-value">{{ available_item_units }}</span>
+            <span class="stat-label">Available</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-value">{{ borrowed_item_units }}</span>
+            <span class="stat-label">Borrowed</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-value">{{ maintenance_item_units }}</span>
+            <span class="stat-label">Maintenance</span>
+        </div>
+    </div>
 
     <h3>Borrowing</h3>
-    <ul>
-        <li>Active borrow records: {{ active_borrow_records }}</li>
-        <li>Overdue borrow records: {{ overdue_borrow_records }}</li>
-    </ul>
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <span class="stat-value">{{ active_borrow_records }}</span>
+            <span class="stat-label">Active borrow records</span>
+        </div>
+        <div class="stat-tile{{ ' stat-warning' if overdue_borrow_records > 0 }}">
+            <span class="stat-value">{{ overdue_borrow_records }}</span>
+            <span class="stat-label">Overdue</span>
+        </div>
+    </div>
 </section>
 {% endblock %}
